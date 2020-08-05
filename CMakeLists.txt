@@ -44,6 +44,9 @@ target_link_libraries(lolsrv_cb3 PRIVATE lolsrv_lib)
 add_executable(lolsrv_cb3_ab src/main_cb3_ab.hpp src/main_cb3_ab.cpp)
 target_link_libraries(lolsrv_cb3_ab PRIVATE lolsrv_lib)
 
+add_executable(lolsrv_live084 src/main_live084.hpp src/main_live084.cpp)
+target_link_libraries(lolsrv_live084 PRIVATE lolsrv_lib)
+
 add_executable(lolsrv_live126 src/main_live126.hpp src/main_live126.cpp)
 target_link_libraries(lolsrv_live126 PRIVATE lolsrv_lib)
 

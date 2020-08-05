@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <array>
 #include <vector>
+#include <string_view>
 
 struct BlowFish {
     struct State {
