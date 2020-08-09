@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <array>
+#include <cstring>
 #include <memory>
 #include <sstream>
 #include <functional>
@@ -41,6 +42,14 @@ inline std::basic_ostream<StreamArgs...> &
 operator <= (std::basic_ostream<StreamArgs...> & out, T const & data)
 {
     out.write(reinterpret_cast<char const *>(&data), sizeof(T));
+    return out;
+}
+
+template <class... StreamArgs>
+inline std::basic_ostream<StreamArgs...> &
+operator <= (std::basic_ostream<StreamArgs...> & out, char const* const data)
+{
+    out.write(data, strlen(data) + 1);
     return out;
 }
 

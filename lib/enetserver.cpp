@@ -74,9 +74,12 @@ void ENetServer::send_raw(int32_t cid, void const *pkt, size_t size, uint8_t cha
         return;
     }
     auto const peer = i->second;
-    auto packet = enet_packet_create(pkt, size, flags & ~ENET_PACKET_FLAG_NO_ALLOCATE);
+    auto const extra = 8 - (size % 8);
+    auto packet = enet_packet_create(pkt, size + extra, flags & ~ENET_PACKET_FLAG_NO_ALLOCATE);
     memcpy(packet->data, pkt, size);
-    blowfish.encrypt((char*)packet->data, size);
+    if (extra)
+        memset(packet->data + size, 0, extra);
+    blowfish.encrypt((char*)packet->data, size + extra);
     enet_peer_send(peer, channel, packet);
 }
 
@@ -115,11 +118,13 @@ void ENetServer::route_packet(int32_t cid, uint8_t channel, ENetPacket const* pa
     uint8_t packetId = (uint8_t)(data[0]);
     LOG_DEBUG("Got packet on %u from %u: 0x%02x = %u, size : %u", channel, cid, packetId, packetId, packet->dataLength);
     if (Logger::currentLevel >= LogLevel::LLOG_TRACE) {
-      for (size_t i = 0; i < packet->dataLength; i += 8) {
-        for (size_t c = i; c < packet->dataLength && c < (i + 8); c++)
-          printf("%02x ", packet->data[c]);
-        for (size_t c = i; c < packet->dataLength && c < (i + 8); c++) {
-          uint8_t z = packet->data[c];
+      for (size_t i = 0; i < data.size(); i += 8) {
+        for (size_t c = i; c < data.size() && c < (i + 8); c++) {
+          uint8_t z = data.data()[c];
+          printf("%02X ", z);
+        }
+        for (size_t c = i; c < data.size() && c < (i + 8); c++) {
+          uint8_t z = data.data()[c];
           if (z < 0x7f && z > 0x1f)
             printf("  %c", z);
           else

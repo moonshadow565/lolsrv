@@ -1,4 +1,4 @@
-#!python
+#!/bin/python3
 import sys
 import re
 has_pe = True
@@ -61,7 +61,7 @@ start_offset = data.index(b"\x68" + write_num(dummy_offset, 4))
 assert(start_offset != -1)
 
 offset =  start_offset
-packets = {}
+packets = []
 name = None
 id = 0
 
@@ -99,7 +99,7 @@ while True:
         id = read_num(data[offset:offset+4])
         offset += 4
     elif c == 0xE8:
-        packets[name] = id
+        packets.append((name, id))
         offset += 4
     elif c == 0x83:
         offset += 2
@@ -110,10 +110,11 @@ while True:
     else:
         raise Exception(f"Invalid instruction {offset:08X}")
 
-print(f"// Version: {version}")
-print(f"// Signature: 0x{signature:08X}")
+packets.sort(key=lambda x: x[1])
+#print(f"// Version: {version}")
+#print(f"// Signature: 0x{signature:08X}")
 print("enum pkttype_e")
 print("{")
-for name, id in packets.items():
+for name, id in packets:
     print(f"    {name} = 0x{id:X},")
 print("};")
