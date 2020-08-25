@@ -2,26 +2,17 @@
 #include <cctype>
 #include "enetserver.hpp"
 
-struct PKT_KeyCheck_s
-{
+struct PKT_KeyCheck_s {
     uint8_t cmd = {};
     int32_t clientID = {};
     int64_t playerID = {};
     uint64_t checkId = {};
-
-    static inline constexpr uint32_t flag() noexcept {
-        return ENET_PACKET_FLAG_RELIABLE;
-    }
-    static inline constexpr uint8_t channel() noexcept {
-        return 0;
-    }
 };
 
 ENetServer::ENetServer(const ENetAddress address, const std::string_view key) noexcept
-    : blowfish{key}, host{enet_host_create(&address, 32, 0, 0), &enet_host_destroy}
-{
+        : blowfish{key}, host{enet_host_create(&address, 32, 0, 0), &enet_host_destroy} {
     if (!host) {
-        panic("host: %08X, port: %u", address.host, address.port);
+        panic("enet_host_create(host: %08X, port: %u) == nullptr", address.host, address.port);
     }
 }
 
@@ -30,19 +21,21 @@ void ENetServer::service(uint32_t timeout) noexcept {
         ENetEvent event = {};
         auto result = enet_host_service(host.get(), &event, timeout);
         if (result < 0) {
-            panic("result < 0");
+            panic("enet_host_service() < 0");
         }
-        switch(event.type)
-        {
+        switch(event.type) {
             case ENET_EVENT_TYPE_NONE:
+                if (onNone) {
+                    onNone();
+                }
                 break;
             case ENET_EVENT_TYPE_CONNECT:
-                LOG_TRACE("Got ENET_EVENT_TYPE_CONNECT");
+                LOG_TRACE("ENET_EVENT_TYPE_CONNECT");
                 event.peer->data = (void*)(intptr_t)(int32_t)-1;
                 event.peer->mtu = 996;
             break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                LOG_TRACE("Got ENET_EVENT_TYPE_DISCONNECT");
+                LOG_TRACE("ENET_EVENT_TYPE_DISCONNECT");
                 if (int32_t cid = (int32_t)(intptr_t)(event.peer->data); cid != -1) {
                     if (auto i = peers.find(cid); i != peers.end()) {
                         peers.erase(i);
@@ -53,12 +46,12 @@ void ENetServer::service(uint32_t timeout) noexcept {
                 }
             break;
             case ENET_EVENT_TYPE_RECEIVE:
-                LOG_TRACE("Got ENET_EVENT_TYPE_RECEIVE");
+                LOG_TRACE("ENET_EVENT_TYPE_RECEIVE");
                 if (int32_t cid = (int32_t)(intptr_t)(event.peer->data); cid != -1) {
                     route_packet(cid, event.channelID, event.packet);
                 } else {
                     if (!route_auth(event.peer, event.packet)) {
-                        LOG_DEBUG("failed to auth!");
+                        LOG_DEBUG("Auth failiure!");
                         enet_peer_disconnect(event.peer, 0);
                     }
                 }
@@ -73,14 +66,14 @@ void ENetServer::send_raw(int32_t cid, void const *pkt, size_t size, uint8_t cha
     if (i == peers.end()) {
         return;
     }
-    auto const peer = i->second;
-    auto const extra = 8 - (size % 8);
-    auto packet = enet_packet_create(pkt, size + extra, flags & ~ENET_PACKET_FLAG_NO_ALLOCATE);
-    memcpy(packet->data, pkt, size);
-    if (extra)
-        memset(packet->data + size, 0, extra);
-    blowfish.encrypt((char*)packet->data, size + extra);
-    enet_peer_send(peer, channel, packet);
+    uint8_t packetId = size ? (uint8_t)(*((char const*)pkt)) : 0;
+    LOG_DEBUG("Sending packet on %u to %u: 0x%02X, size : %u", channel, cid, packetId, size);
+    if (Logger::currentLevel >= LogLevel::LLOG_TRACE) {
+        puts(to_hex({(char const* )pkt, (char const*)pkt + size}).c_str());
+    }
+    auto packet = enet_packet_create(pkt, size, flags & ~ENET_PACKET_FLAG_NO_ALLOCATE);
+    blowfish.encrypt((char*)packet->data, size);
+    enet_peer_send(i->second, channel, packet);
 }
 
 bool ENetServer::route_auth(ENetPeer *peer, ENetPacket const* packet) {
@@ -101,7 +94,7 @@ bool ENetServer::route_auth(ENetPeer *peer, ENetPacket const* packet) {
     pkt.clientID = (int32_t)(pkt.playerID);
     peers[pkt.clientID] = peer;
     peer->data = (void*)(intptr_t)pkt.clientID;
-    send_simple(pkt.clientID, pkt);
+    send_raw(pkt.clientID, &pkt, sizeof(pkt), 0, ENET_PACKET_FLAG_RELIABLE);
     if (onConnected) {
         onConnected(pkt.clientID);
     }
@@ -109,43 +102,23 @@ bool ENetServer::route_auth(ENetPeer *peer, ENetPacket const* packet) {
 }
 
 void ENetServer::route_packet(int32_t cid, uint8_t channel, ENetPacket const* packet) {
-    if(channel >= 8) {
-        LOG_ERROR("Uknown channel: %u from %d", channel, cid);
-        return;
-    }
     std::vector data = std::vector<char>((char const*)(packet->data), (char const*)(packet->data + packet->dataLength));
     blowfish.decrypt(data.data(), data.size());
-    uint8_t packetId = (uint8_t)(data[0]);
-    LOG_DEBUG("Got packet on %u from %u: 0x%02x = %u, size : %u", channel, cid, packetId, packetId, packet->dataLength);
+    uint8_t packetId = data.size() ? (uint8_t)(data[0]) : 0;
+    LOG_DEBUG("Reading packet on %u from %u: 0x%02X, size : %u", channel, cid, packetId, packet->dataLength);
     if (Logger::currentLevel >= LogLevel::LLOG_TRACE) {
-      for (size_t i = 0; i < data.size(); i += 8) {
-        for (size_t c = i; c < data.size() && c < (i + 8); c++) {
-          uint8_t z = data.data()[c];
-          printf("%02X ", z);
-        }
-        for (size_t c = i; c < data.size() && c < (i + 8); c++) {
-          uint8_t z = data.data()[c];
-          if (z < 0x7f && z > 0x1f)
-            printf("  %c", z);
-          else
-            printf(" ..");
-        }
-        printf("\n");
-      }
+        puts(to_hex(data).c_str());
     }
-    auto& handler = onPacket[channel];
-    if (handler) {
-        handler(cid, data.data(), data.size());
+    if (onPacket) {
+        onPacket(channel, cid, data.data(), data.size());
     }
 }
 
-struct ENetInit {
-    ENetInit() {
+static struct ENetInit {
+    inline ENetInit() {
         enet_initialize();
     }
-    ~ENetInit() {
+    inline ~ENetInit() {
         enet_deinitialize();
     }
-};
-
-static ENetInit enet_init = {};
+} enet_init = {};
