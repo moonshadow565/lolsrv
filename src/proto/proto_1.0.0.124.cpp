@@ -260,8 +260,8 @@ void ProtoVer::read(Data_in& in, PlayerLiteInfo& value) const {
     in.read_num<uint32_t>(value.summonorSpell2);
     in.read_num<bool>(value.isBot);
     in.read_num<uint32_t>(value.teamId);
-    in.read_fstr<28>(value.botName);
-    in.read_fstr<28>(value.skinName);
+    in.read_fstr(value.botName, 28);
+    in.read_fstr(value.skinName, 28);
     in.read_num<uint32_t>(value.botDifficulty);
     in.read_num<uint32_t>(value.profileIconId);
 }
@@ -272,8 +272,8 @@ void ProtoVer::write(Data_out& out, PlayerLiteInfo const& value) const {
     out.write_num<uint32_t>(value.summonorSpell2);
     out.write_num<bool>(value.isBot);
     out.write_num<uint32_t>(value.teamId);
-    out.write_fstr<28>(value.botName);
-    out.write_fstr<28>(value.skinName);
+    out.write_fstr(value.botName, 28);
+    out.write_fstr(value.skinName, 28);
     out.write_num<uint32_t>(value.botDifficulty);
     out.write_num<uint32_t>(value.profileIconId);
 }

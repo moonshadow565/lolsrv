@@ -1,13 +1,11 @@
 #pragma once
-#include <cstdint>
-#include <cstddef>
+#include <r3d.hpp>
+#include <io.hpp>
 #include <vector>
 #include <array>
 #include <string>
 #include <optional>
 #include <variant>
-#include <r3d.hpp>
-#include <io.hpp>
 
 enum Channel : uint32_t {
     CHANNEL_DEFAULT = 0x0,
@@ -52,6 +50,19 @@ struct EGP_TeamRosterUpdate : public DefaultPayload {
     uint32_t current_teamsize_chaos = {};
 };
 
+struct EGP_Chat : public DefaultPayload {
+    int32_t clientID = {};
+    uint32_t chatType = {};
+    std::string message = {};
+};
+
+struct CommonBasicAttack {
+    uint32_t targetNetId = {};
+    float extraTime = {};
+    uint32_t missileNextID = {};
+    uint8_t attackSlot = {};
+};
+
 struct ConnectionInfo {
     int32_t mClientID = {};
     int64_t mPlayerID = {};
@@ -86,6 +97,30 @@ struct ItemData {
 
 struct DefaultPacket {};
 
+struct PKT_Basic_Attack {
+    uint32_t fromID = {};
+    CommonBasicAttack data = {};
+};
+
+struct PKT_Basic_Attack_Pos {
+    uint32_t fromID = {};
+    CommonBasicAttack data = {};
+    r3dPoint2D pos = {};
+};
+
+struct PKT_BuyItemAns : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t slot = {};
+    uint32_t itemID = {};
+    uint8_t itemsInSlot = {};
+    bool useOnBought = {};
+};
+
+struct PKT_BuyItemReq : public DefaultPacket {
+    uint32_t fromID = {};
+    uint32_t itemID = {};
+};
+
 struct PKT_C2S_CharSelected : public DefaultPacket {
     uint32_t fromID = {};
 };
@@ -94,9 +129,21 @@ struct PKT_C2S_ClientReady : public DefaultPacket {
     uint32_t fromID = {};
 };
 
+struct PKT_C2S_MapPing : public DefaultPacket {
+    uint32_t fromID = {};
+    r3dPoint3D pos = {};
+    uint32_t target = {};
+    uint8_t pingCategory = {};
+};
+
 struct PKT_C2S_Ping_Load_Info : public DefaultPacket {
     uint32_t fromID = {};
     ConnectionInfo mConnectionInfo = {};
+};
+
+struct PKT_C2S_PlayEmote : public DefaultPacket {
+    uint32_t fromID = {};
+    uint32_t mEmoteId = {};
 };
 
 struct PKT_C2S_QueryStatusReq : public DefaultPacket {
@@ -108,11 +155,38 @@ struct PKT_C2S_Reconnect : public DefaultPacket {
     bool isFullReconnect = {};
 };
 
+struct PKT_NPC_Die : public DefaultPacket {
+    uint32_t fromID = {};
+    uint32_t killerNetID;
+    uint8_t damageType = {};
+    uint8_t mSpellSourceType = {};
+    float DeathDuration = {};
+    bool becomeZombie = {};
+};
+
 struct PKT_NPC_IssueOrderReq : public DefaultPacket {
     uint32_t fromID = {};
     uint8_t order = {};
     r3dPoint3D pos = {};
     uint32_t targetNetID = {};
+};
+
+struct PKT_NPC_LevelUp : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t mLevel = {};
+    uint8_t mPoints = {};
+};
+
+struct PKT_NPC_UpgradeSpellAns : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t slot = {};
+    uint8_t spellLevel = {};
+    uint8_t spellTrainingPoints = {};
+};
+
+struct PKT_NPC_UpgradeSpellReq : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t slot = {};
 };
 
 struct PKT_OnEnterVisiblityClient : public DefaultPacket {
@@ -121,6 +195,25 @@ struct PKT_OnEnterVisiblityClient : public DefaultPacket {
     std::optional<r3dPoint3D> lookat = {};
     std::optional<r3dPoint2D> position = {};
     uint32_t syncId = {};
+};
+
+struct PKT_RemoveItemAns : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t slot = {};
+    uint8_t itemsInSlot = {};
+};
+
+struct PKT_RemoveItemReq : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t slot = {};
+    uint8_t bSell = {};
+};
+
+struct PKT_S2C_ChangeCharacterData : public DefaultPacket {
+    uint32_t fromID = {};
+    uint32_t id = {};
+    bool useSpells = {};
+    std::string skinName = {};
 };
 
 struct PKT_S2C_CreateHero : public DefaultPacket {
@@ -145,13 +238,41 @@ struct PKT_S2C_CreateTurret : public DefaultPacket {
     std::string Name = {};
 };
 
+struct PKT_S2C_FaceDirection : public DefaultPacket {
+    uint32_t fromID = {};
+    r3dPoint3D direction = {};
+};
+
 struct PKT_S2C_EndSpawn : public DefaultPacket {
     uint32_t fromID = {};
+};
+
+struct PKT_S2C_MapPing : public DefaultPacket {
+    uint32_t fromID = {};
+    r3dPoint3D pos = {};
+    uint32_t target = {};
+    uint32_t src = {};
+    uint8_t pingCategory = {};
+    bool bPlayAudio = {};
+    bool bShowChat = {};
+    bool bPingThrottled = {};
 };
 
 struct PKT_S2C_Ping_Load_Info : public DefaultPacket {
     uint32_t fromID = {};
     ConnectionInfo mConnectionInfo = {};
+};
+
+struct PKT_S2C_PlayAnimation : public DefaultPacket {
+    uint32_t fromID = {};
+    uint32_t flags = {};
+    float scaleTime = {};
+    std::string animationName = {};
+};
+
+struct PKT_S2C_PlayEmote : public DefaultPacket {
+    uint32_t fromID = {};
+    uint32_t mEmoteId = {};
 };
 
 struct PKT_S2C_QueryStatusAns : public DefaultPacket {
@@ -173,6 +294,22 @@ struct PKT_S2C_StartSpawn : public DefaultPacket {
     uint32_t fromID = {};
     uint8_t numBotsOrder = {};
     uint8_t numBotsChaos = {};
+};
+
+struct PKT_S2C_ToggleFoW : public DefaultPacket {
+    uint32_t fromID = {};
+};
+
+struct PKT_SwapItemAns : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t source = {};
+    uint8_t dest = {};
+};
+
+struct PKT_SwapItemReq : public DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t source = {};
+    uint8_t dest = {};
 };
 
 struct PKT_SynchVersionC2S : public DefaultPacket {
@@ -197,37 +334,76 @@ struct PKT_WaypointList : public DefaultPacket {
     std::vector<r3dPoint2D> list = {};
 };
 
-struct PKT_S2C_FaceDirection : public DefaultPacket {
+struct PKT_World_LockCamera_Server : public DefaultPacket {
     uint32_t fromID = {};
-    r3dPoint3D direction = {};
+    bool lockCamera = {};
+    int32_t clientID = {};
 };
 
+struct PKT_World_SendCamera_Server : public DefaultPacket {
+    uint32_t fromID = {};
+    r3dPoint3D cameraPos = {};
+    r3dPoint3D cameraDir = {};
+    int32_t clientID = {};
+    int8_t syncID = {};
+};
+
+struct PKT_World_SendCamera_Server_Acknologment : public DefaultPacket {
+    uint32_t fromID = {};
+    int8_t syncID = {};
+};
+
+
 using PKT_C2S = std::variant<
-    EGP_RequestJoinTeam,
-    PKT_C2S_CharSelected,
-    PKT_C2S_ClientReady,
-    PKT_C2S_Ping_Load_Info,
-    PKT_C2S_QueryStatusReq,
-    PKT_C2S_Reconnect,
-    PKT_NPC_IssueOrderReq,
-    PKT_SynchVersionC2S
+EGP_RequestJoinTeam,
+EGP_Chat,
+PKT_BuyItemReq,
+PKT_C2S_CharSelected,
+PKT_C2S_ClientReady,
+PKT_C2S_MapPing,
+PKT_C2S_Ping_Load_Info,
+PKT_C2S_PlayEmote,
+PKT_C2S_QueryStatusReq,
+PKT_C2S_Reconnect,
+PKT_NPC_IssueOrderReq,
+PKT_NPC_UpgradeSpellReq,
+PKT_RemoveItemReq,
+PKT_SwapItemReq,
+PKT_SynchVersionC2S,
+PKT_World_LockCamera_Server,
+PKT_World_SendCamera_Server
 >;
 
 using PKT_S2C = std::variant<
-    EGP_RequestRename,
-    EGP_RequestReskin,
-    EGP_TeamRosterUpdate,
-    PKT_OnEnterVisiblityClient,
-    PKT_S2C_CreateHero,
-    PKT_S2C_CreateTurret,
-    PKT_S2C_EndSpawn,
-    PKT_S2C_Ping_Load_Info,
-    PKT_S2C_QueryStatusAns,
-    PKT_S2C_Reconnect,
-    PKT_S2C_StartGame,
-    PKT_S2C_StartSpawn,
-    PKT_SynchVersionS2C,
-    PKT_WaypointList,
-    PKT_S2C_FaceDirection
+EGP_RequestRename,
+EGP_RequestReskin,
+EGP_TeamRosterUpdate,
+EGP_Chat,
+PKT_Basic_Attack,
+PKT_Basic_Attack_Pos,
+PKT_BuyItemAns,
+PKT_NPC_Die,
+PKT_NPC_LevelUp,
+PKT_NPC_UpgradeSpellAns,
+PKT_OnEnterVisiblityClient,
+PKT_RemoveItemAns,
+PKT_S2C_ChangeCharacterData,
+PKT_S2C_CreateHero,
+PKT_S2C_CreateTurret,
+PKT_S2C_FaceDirection,
+PKT_S2C_EndSpawn,
+PKT_S2C_MapPing,
+PKT_S2C_Ping_Load_Info,
+PKT_S2C_PlayAnimation,
+PKT_S2C_PlayEmote,
+PKT_S2C_QueryStatusAns,
+PKT_S2C_Reconnect,
+PKT_S2C_StartGame,
+PKT_S2C_StartSpawn,
+PKT_S2C_ToggleFoW,
+PKT_SynchVersionS2C,
+PKT_SwapItemAns,
+PKT_WaypointList,
+PKT_World_SendCamera_Server_Acknologment
 >;
 

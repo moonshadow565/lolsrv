@@ -1,8 +1,6 @@
 #pragma once
-#include <cstdint>
-#include <cstddef>
+#include <cinttypes>
 #include <array>
-#include <vector>
 #include <string_view>
 
 struct BlowFish {

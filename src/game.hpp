@@ -1,5 +1,5 @@
 #pragma once
-#include "proto/pkt.hpp"
+#include "proto/proto_pkt.hpp"
 #include "options.hpp"
 #include <log.hpp>
 #include <functional>
@@ -20,11 +20,19 @@ struct Game {
 
     void on_packet(int32_t cid, EGP_RequestJoinTeam const& pkt);
 
+    void on_packet(int32_t cid, EGP_Chat const& pkt);
+
+    void on_packet(int32_t cid, PKT_BuyItemReq const& pkt);
+
     void on_packet(int32_t cid, PKT_C2S_CharSelected const& pkt);
 
     void on_packet(int32_t cid, PKT_C2S_ClientReady const& pkt);
 
+    void on_packet(int32_t cid, PKT_C2S_MapPing const& pkt);
+
     void on_packet(int32_t cid, PKT_C2S_Ping_Load_Info const& pkt);
+
+    void on_packet(int32_t cid, PKT_C2S_PlayEmote const& pkt);
 
     void on_packet(int32_t cid, PKT_C2S_QueryStatusReq const& pkt);
 
@@ -32,5 +40,16 @@ struct Game {
 
     void on_packet(int32_t cid, PKT_NPC_IssueOrderReq const& pkt);
 
+    void on_packet(int32_t cid, PKT_NPC_UpgradeSpellReq const& pkt);
+
+    void on_packet(int32_t cid, PKT_RemoveItemReq const& pkt);
+
+    void on_packet(int32_t cid, PKT_SwapItemReq const& pkt);
+
     void on_packet(int32_t cid, PKT_SynchVersionC2S const& pkt);
+
+    void on_packet(int32_t cid, PKT_World_LockCamera_Server const& pkt);
+
+    void on_packet(int32_t cid, PKT_World_SendCamera_Server const& pkt);
 };
+

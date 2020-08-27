@@ -1,5 +1,7 @@
-#include <iostream>
 #include <cctype>
+#include <cstring>
+#include <cstdlib>
+#include <vector>
 #include "enetserver.hpp"
 
 struct PKT_KeyCheck_s {
@@ -83,9 +85,9 @@ bool ENetServer::route_auth(ENetPeer *peer, ENetPacket const* packet) {
     PKT_KeyCheck_s pkt = *(PKT_KeyCheck_s const*)(packet->data);
     LOG_DEBUG("Authing: %016llX with checkID of %016llX", pkt.playerID, pkt.checkId);
     std::array<char, 8> encrypted = {};
-    memcpy(encrypted.data(), &pkt.checkId, 8);
+    std::memcpy(encrypted.data(), &pkt.checkId, 8);
     std::array<char, 8> decrypted = {};
-    memcpy(decrypted.data(), &pkt.playerID, 8);
+    std::memcpy(decrypted.data(), &pkt.playerID, 8);
     blowfish.decrypt(encrypted.data(), 8);
     if (encrypted != decrypted) {
         return false;

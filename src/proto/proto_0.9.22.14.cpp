@@ -161,11 +161,22 @@ Span<ProtoNameID const> ProtoVer::pkt_array() const {
 
 void ProtoVer::read(Data_in& in, PKT_ID& value) const {
     in.read_num<uint8_t>(value);
-    in.read_pad<3>();
+    in.read_pad(3);
 }
 void ProtoVer::write(Data_out& out, PKT_ID const& value) const {
     out.write_num<uint8_t>(value);
-    out.write_pad<3>();
+    out.write_pad(3);
+}
+
+void ProtoVer::read(Data_in& in, EGP_Chat& value) const {
+    in.read_num<int32_t>(value.clientID);
+    in.read_num<uint32_t>(value.chatType);
+    in.read_szstr(value.message);
+}
+void ProtoVer::write(Data_out& out, EGP_Chat const& value) const {
+    out.write_num<int32_t>(value.clientID);
+    out.write_num<uint32_t>(value.chatType);
+    out.write_szstr(value.message);
 }
 
 void ProtoVer::read(Data_in& in, PKT_S2C_CreateHero& value) const {
@@ -177,8 +188,8 @@ void ProtoVer::read(Data_in& in, PKT_S2C_CreateHero& value) const {
     in.read_num<bool>(value.teamIsOrder);
     in.read_num<bool>(value.isBot);
     in.read_num<int32_t>(value.skinID);
-    in.read_fstr<40>(value.Name);
-    in.read_fstr<40>(value.Skin);
+    in.read_fstr(value.Name, 40);
+    in.read_fstr(value.Skin, 40);
 }
 void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
     out.write_num<uint32_t>(value.fromID);
@@ -189,6 +200,6 @@ void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
     out.write_num<bool>(value.teamIsOrder);
     out.write_num<bool>(value.isBot);
     out.write_num<int32_t>(value.skinID);
-    out.write_fstr<40>(value.Name);
-    out.write_fstr<40>(value.Skin);
+    out.write_fstr(value.Name, 40);
+    out.write_fstr(value.Skin, 40);
 }

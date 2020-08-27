@@ -84,7 +84,7 @@ public:
     }
 
     void on_packet(uint8_t channel, int32_t cid, char const* data, size_t size) {
-        if (channel == CHANNEL_DEFAULT || channel == CHANNEL_MIDDLE_TIER_CHAT) {
+        if (channel == CHANNEL_DEFAULT) {
             return;
         }
         try {
@@ -99,7 +99,7 @@ public:
         } catch(ProtoErrorIO const& err) {
             LOG_ERROR("ProtoErrorIO: %s @ %d", err.name.data(), (int32_t)err.position);
         } catch (ProtoErrorUnknownID const& err) {
-            LOG_ERROR("ProtoErrorUnknownID: %u @ %u", err.id, err.channel);
+            LOG_ERROR("ProtoErrorUnknownID: %u", err.id);
         } catch (ProtoErrorReadNotImpl const& err) {
             if (std::find(std::begin(IGNORE_C2S_WARNINGS), std::end(IGNORE_C2S_WARNINGS), err.name) == std::end(IGNORE_C2S_WARNINGS)) {
                 LOG_WARNING("ProtoErrorReadNotImpl: %s", err.name.data());

@@ -189,8 +189,8 @@ void ProtoVer::read(Data_in& in, PKT_S2C_CreateHero& value) const {
     in.read_num<bool>(value.isBot);
     in.read_num<uint8_t>(value.spawnPosIndex);
     in.read_num<int32_t>(value.skinID);
-    in.read_fstr<40>(value.Name);
-    in.read_fstr<40>(value.Skin);
+    in.read_fstr(value.Name, 40);
+    in.read_fstr(value.Skin, 40);
 }
 void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
     out.write_num<uint32_t>(value.fromID);
@@ -202,8 +202,8 @@ void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
     out.write_num<bool>(value.isBot);
     out.write_num<uint8_t>(value.spawnPosIndex);
     out.write_num<int32_t>(value.skinID);
-    out.write_fstr<40>(value.Name);
-    out.write_fstr<40>(value.Skin);
+    out.write_fstr(value.Name, 40);
+    out.write_fstr(value.Skin, 40);
 }
 
 void ProtoVer::read(Data_in& in, PKT_SynchVersionS2C& value) const {
@@ -213,8 +213,8 @@ void ProtoVer::read(Data_in& in, PKT_SynchVersionS2C& value) const {
     for(auto& elem: value.playerInfo) {
         read(in, elem);
     }
-    in.read_fstr<256>(value.mVersionString);
-    in.read_fstr<128>(value.mMapMode);
+    in.read_fstr(value.mVersionString, 256);
+    in.read_fstr(value.mMapMode, 128);
 }
 void ProtoVer::write(Data_out& out, PKT_SynchVersionS2C const& value) const {
     out.write_num<uint32_t>(value.fromID);
@@ -223,6 +223,6 @@ void ProtoVer::write(Data_out& out, PKT_SynchVersionS2C const& value) const {
     for(auto const& elem: value.playerInfo) {
         write(out, elem);
     }
-    out.write_fstr<256>(value.mVersionString);
-    out.write_fstr<128>(value.mMapMode);
+    out.write_fstr(value.mVersionString, 256);
+    out.write_fstr(value.mMapMode, 128);
 }

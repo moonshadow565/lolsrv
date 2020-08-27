@@ -1,13 +1,14 @@
 #pragma once
+#include <array>
 #include <cinttypes>
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <stdexcept>
 #include <type_traits>
 #include <vector>
 #include <r3d.hpp>
-#include <stdexcept>
+#include <span.hpp>
 
 struct IOError : std::exception {
     ptrdiff_t position = {};
@@ -38,134 +39,49 @@ struct Data_in {
     inline constexpr Data_in(char const* data, size_t size) noexcept
         : start(data), cur(data), end(data + size) {}
 
-    inline ptrdiff_t left() const noexcept {
-        return end - cur;
-    }
+    void check_space(size_t size) const;
 
-    inline ptrdiff_t position() const noexcept {
-        return cur - start;
-    }
-
-    inline void check_space(size_t size) const {
-        if ((ptrdiff_t)size > left()) {
-            throw IOError(position());
-        }
-    }
+    void read_raw(void* data, size_t size);
 
     template<typename C, typename T>
     inline void read_num(T& value) {
         static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
         static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
-        check_space(sizeof(C));
         if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            std::memcpy(&value, cur, sizeof(C));
+            read_raw(&value, sizeof(value));
         } else {
-            C result = {};
-            std::memcpy(&result, cur, sizeof(C));
+            C result;
+            read_raw(&result, sizeof(result));
             value = static_cast<std::remove_cvref_t<T>>(result);
         }
-        cur += sizeof(C);
     }
 
-    inline void read_point2d(r3dPoint2D& value) {
-        check_space(sizeof(r3dPoint2D));
-        std::memcpy(&value, cur, sizeof(r3dPoint2D));
-        cur += sizeof(r3dPoint2D);
-    }
+    void read_point2d(r3dPoint2D& value);
 
-    inline void read_point3d(r3dPoint3D& value) {
-        check_space(sizeof(r3dPoint3D));
-        std::memcpy(&value, cur, sizeof(r3dPoint3D));
-        cur += sizeof(r3dPoint3D);
-    }
+    void read_point3d(r3dPoint3D& value);
 
     template<typename C, typename T, size_t S>
     inline void read_num_array(T(&array)[S]) {
         static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
         static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
-        check_space(sizeof(C) * S);
         if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            std::memcpy(array, cur, sizeof(C) * S);
-            cur += sizeof(C) * S;
+            read_raw(array, sizeof(array));
         } else {
             for(auto& value: array) {
-                C result = {};
-                std::memcpy(&result, cur, sizeof(C));
-                cur += sizeof(C);
-                value = static_cast<std::remove_cvref_t<T>>(result);
+                read_num<C>(value);
             }
         }
     }
 
-    template<typename C, typename T, size_t S>
-    inline void read_num_array(std::array<T, S>& array) {
-        static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
-        static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
-        check_space(sizeof(C) * S);
-        if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            std::memcpy(array.data(), cur, sizeof(C) * S);
-            cur += sizeof(C) * S;
-        } else {
-            for(auto& value: array) {
-                C result = {};
-                std::memcpy(&result, cur, sizeof(C));
-                cur += sizeof(C);
-                value = static_cast<std::remove_cvref_t<T>>(result);
-            }
-        }
-    }
+    void read_pad(size_t S);
 
-    template<size_t S>
-    inline void read_pad() {
-        check_space(S);
-        cur += S;
-    }
+    void read_zstr(std::string& value);
 
-    inline void read_zstr(std::string& value) {
-        value.clear();
-        while (cur != end) {
-            char c = *cur;
-            cur++;
-            if (c == '\0') {
-                break;
-            }
-            value.push_back(c);
-        }
-    }
+    void read_fstr(std::string& value, size_t S);
 
-    template<size_t S>
-    inline void read_fstr(std::string& value) {
-        check_space(S);
-        value.resize(S);
-        value.clear();
-        std::memcpy(value.data(), cur, S);
-        cur += S;
-        auto const zero = value.find('\0');
-        if (zero != std::string::npos) {
-            value.resize((size_t)zero);
-        }
-    }
+    void read_sstr(std::string& value);
 
-    template<typename S>
-    inline void read_sstr(std::string& value) {
-        S size = {};
-        read_num<S>(size);
-        value.resize(size);
-        value.clear();
-        if (size > 0) {
-            std::memcpy(value.data(), cur, size);
-        }
-        cur += size;
-        auto const zero = value.find('\0');
-        if (zero != std::string::npos) {
-            value.resize((size_t)zero);
-        }
-    }
-
-    template<typename S>
-    inline void read_szstr(std::string& value) {
-        return read_sstr<S>(value);
-    }
+    void read_szstr(std::string& value);
 
     template<typename B, typename...C, size_t...S, typename...T>
     inline void read_bit(Field<C, S, T>...values) {
@@ -196,110 +112,51 @@ struct Data_in {
 struct Data_out {
     std::vector<char> buffer = {};
 
+    void write_raw(void const* data, size_t size);
+
     template<typename C, typename T>
     inline void write_num(T const& value) {
         static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
         static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
-        size_t const cur = buffer.size();
-        buffer.resize(cur + sizeof(C));
         if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            std::memcpy(buffer.data() + cur, &value, sizeof(C));
+            write_raw(&value, sizeof(value));
         } else {
             C result = static_cast<C>(value);
-            std::memcpy(buffer.data() + cur, &result, sizeof(C));
+            write_raw(&result, sizeof(result));
         }
     }
 
-    inline void write_point2d(r3dPoint2D const& value) {
-        size_t const cur = buffer.size();
-        buffer.resize(cur + sizeof(r3dPoint2D));
-        std::memcpy(buffer.data() + cur, &value, sizeof(r3dPoint2D));
-    }
+    void write_point2d(r3dPoint2D const& value);
 
-    inline void write_point3d(r3dPoint3D const& value) {
-        size_t const cur = buffer.size();
-        buffer.resize(cur + sizeof(r3dPoint3D));
-        std::memcpy(buffer.data() + cur, &value, sizeof(r3dPoint3D));
-    }
+    void write_point3d(r3dPoint3D const& value);
 
     template<typename C, typename T, size_t S>
     inline void write_num_array(T const(&array)[S]) {
         static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
         static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
         if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            size_t const cur = buffer.size();
-            buffer.resize(cur + sizeof(C) * S);
-            std::memcpy(buffer.data() + cur, array, sizeof(C) * S);
+            write_raw(array, sizeof(array));
         } else {
             for(auto const& value: array) {
-                C result = static_cast<C>(value);
-                size_t const cur = buffer.size();
-                buffer.resize(cur + sizeof(C));
-                std::memcpy(buffer.data() + cur, &result, sizeof(C));
+                write_num<C>(value);
             }
         }
     }
 
-    template<typename C, typename T, size_t S>
-    inline void write_num_array(std::array<T, S> const& array) {
-        static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
-        static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
-        if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            size_t const cur = buffer.size();
-            buffer.resize(cur + sizeof(C) * S);
-            std::memcpy(buffer.data() + cur, array.data(), sizeof(C) * S);
-        } else {
-            for(auto const& value: array) {
-                C result = static_cast<C>(value);
-                size_t const cur = buffer.size();
-                buffer.resize(cur + sizeof(C));
-                std::memcpy(buffer.data() + cur, &result, sizeof(C));
-            }
-        }
-    }
+    void write_pad(size_t S);
 
-    template<size_t S>
-    inline void write_pad() {
-        size_t const cur = buffer.size();
-        buffer.resize(cur + S);
-    }
-
-    inline void write_zstr(std::string const& value) {
+    void write_zstr(std::string const& value) {
         size_t const cur = buffer.size();
         size_t const size = value.size() + 1;
         buffer.resize(cur + size);
         std::memcpy(buffer.data() + cur, value.data(), size);
     }
 
-    template<size_t S>
-    inline void write_fstr(std::string const& value) {
-        size_t const cur = buffer.size();
-        size_t const size = value.size();
-        if ((size + 1) > S) {
-            throw IOError(cur);
-        }
-        buffer.resize(cur + S);
-        std::memcpy(buffer.data() + cur, value.data(), size);
-        std::memset(buffer.data() + cur + size, 0, S - size);
-    }
+    void write_fstr(std::string const& value, size_t S);
 
-    template<typename S>
-    inline void write_sstr(std::string const& value) {
-        size_t const size = value.size();
-        write_num<S>(size);
-        size_t const cur = buffer.size();
-        buffer.resize(cur + size);
-        std::memcpy(buffer.data() + cur, value.data(), size);
-    }
+    void write_sstr(std::string const& value);
 
-    template<typename S>
-    inline void write_szstr(std::string const& value) {
-        size_t const size = value.size() + 1;
-        write_num<S>(size);
-        size_t const cur = buffer.size();
-        buffer.resize(cur + size);
-        std::memcpy(buffer.data() + cur, value.data(), size);
-    }
+    void write_szstr(std::string const& value);
 
     template<typename B, typename...C, size_t...S, typename...T>
     inline void write_bit(Field<C, S, T>...values) {

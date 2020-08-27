@@ -266,8 +266,8 @@ void ProtoVer::read(Data_in& in, PKT_S2C_CreateHero& value) const {
     in.read_num<uint8_t>(value.botRank);
     in.read_num<uint8_t>(value.spawnPosIndex);
     in.read_num<int32_t>(value.skinID);
-    in.read_fstr<128>(value.Name);
-    in.read_fstr<40>(value.Skin);
+    in.read_fstr(value.Name, 128);
+    in.read_fstr(value.Skin, 40);
 }
 void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
     out.write_num<uint32_t>(value.fromID);
@@ -280,6 +280,6 @@ void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
     out.write_num<uint8_t>(value.botRank);
     out.write_num<uint8_t>(value.spawnPosIndex);
     out.write_num<int32_t>(value.skinID);
-    out.write_fstr<128>(value.Name);
-    out.write_fstr<40>(value.Skin);
+    out.write_fstr(value.Name, 128);
+    out.write_fstr(value.Skin, 40);
 }

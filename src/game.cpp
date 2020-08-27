@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include <r3d_ops.hpp>
 
 Game::Game(const Options& aoptions)
     : options(aoptions) {
@@ -43,6 +44,17 @@ void Game::on_packet(int32_t cid, EGP_RequestJoinTeam const& pkt) {
     }
 }
 
+void Game::on_packet(int32_t cid, EGP_Chat const& pkt) {
+    (void)cid;
+    (void)pkt;
+    LOG_INFO("from %d @ %u: %s\n", cid, pkt.chatType, pkt.message.c_str());
+}
+
+void Game::on_packet(int32_t cid, PKT_BuyItemReq const& pkt) {
+    (void)cid;
+    (void)pkt;
+}
+
 void Game::on_packet(int32_t cid, PKT_C2S_CharSelected const& pkt) {
     (void)cid;
     (void)pkt;
@@ -78,6 +90,11 @@ void Game::on_packet(int32_t cid, PKT_C2S_ClientReady const& pkt) {
                 });
 }
 
+void Game::on_packet(int32_t cid, PKT_C2S_MapPing const& pkt) {
+    (void)cid;
+    (void)pkt;
+}
+
 void Game::on_packet(int32_t cid, PKT_C2S_Ping_Load_Info const& pkt) {
     (void)cid;
     (void)pkt;
@@ -86,6 +103,11 @@ void Game::on_packet(int32_t cid, PKT_C2S_Ping_Load_Info const& pkt) {
                         .mConnectionInfo = pkt.mConnectionInfo,
                     });
     }
+}
+
+void Game::on_packet(int32_t cid, PKT_C2S_PlayEmote const& pkt) {
+    (void)cid;
+    (void)pkt;
 }
 
 void Game::on_packet(int32_t cid, PKT_C2S_QueryStatusReq const& pkt) {
@@ -125,6 +147,21 @@ void Game::on_packet(int32_t cid, PKT_NPC_IssueOrderReq const& pkt) {
     }
 }
 
+void Game::on_packet(int32_t cid, PKT_NPC_UpgradeSpellReq const& pkt) {
+    (void)cid;
+    (void)pkt;
+}
+
+void Game::on_packet(int32_t cid, PKT_RemoveItemReq const& pkt) {
+    (void)cid;
+    (void)pkt;
+}
+
+void Game::on_packet(int32_t cid, PKT_SwapItemReq const& pkt) {
+    (void)cid;
+    (void)pkt;
+}
+
 void Game::on_packet(int32_t cid, PKT_SynchVersionC2S const& pkt) {
     (void)cid;
     (void)pkt;
@@ -148,4 +185,14 @@ void Game::on_packet(int32_t cid, PKT_SynchVersionC2S const& pkt) {
                     .mVersionString = pkt.mVersionString,
                     .mMapMode = {},
                 });
+}
+
+void Game::on_packet(int32_t cid, PKT_World_LockCamera_Server const& pkt) {
+    (void)cid;
+    (void)pkt;
+}
+
+void Game::on_packet(int32_t cid, PKT_World_SendCamera_Server const& pkt) {
+    (void)cid;
+    (void)pkt;
 }

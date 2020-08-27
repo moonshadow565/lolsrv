@@ -13,6 +13,9 @@ IMPL_PROTO_VER(PROTO_VER(0.9.22.14), PROTO_VER(0.8.13.26)) {
     void read(Data_in& in, PKT_ID& value) const override;
     void write(Data_out& out, PKT_ID const& value) const override;
 
+    void read(Data_in& in, EGP_Chat& value) const override;
+    void write(Data_out& out, EGP_Chat const& value) const override;
+
     void read(Data_in& in, PKT_S2C_CreateHero& value) const override;
     void write(Data_out& out, PKT_S2C_CreateHero const& value) const override;
 };

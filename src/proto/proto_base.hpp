@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <span.hpp>
 #include <log.hpp>
-#include "pkt.hpp"
+#include "proto_pkt.hpp"
 
 /// Errors
 
@@ -16,9 +16,8 @@ struct ProtoErrorNoID : public ProtoError {
 
 struct ProtoErrorUnknownID : public ProtoError {
     uint16_t id;
-    Channel channel;
-    inline ProtoErrorUnknownID(uint16_t aid, Channel achannel) noexcept
-        : id(aid), channel(achannel) {}
+    inline ProtoErrorUnknownID(uint16_t aid) noexcept
+        : id(aid) {}
 };
 
 struct ProtoErrorReadNotImpl : public ProtoError {
@@ -92,6 +91,7 @@ struct ProtoNameID {
 template<uint32_t...>
 struct ProtoVersion;
 
+
 struct ProtoBase {
 public:
     virtual std::string_view name() const = 0;
@@ -117,11 +117,29 @@ public:
     virtual void read(Data_in& in, EGP_TeamRosterUpdate& value) const;
     virtual void write(Data_out& out, EGP_TeamRosterUpdate const& value) const;
 
+    virtual void read(Data_in& in, EGP_Chat& value) const;
+    virtual void write(Data_out& out, EGP_Chat const& value) const;
+
+    virtual void read(Data_in& in, CommonBasicAttack& value) const;
+    virtual void write(Data_out& out, CommonBasicAttack const& value) const;
+
     virtual void read(Data_in& in, ConnectionInfo& value) const;
     virtual void write(Data_out& out, ConnectionInfo const& value) const;
 
     virtual void read(Data_in& in, PlayerLiteInfo& value) const;
     virtual void write(Data_out& out, PlayerLiteInfo const& value) const;
+
+    virtual void read(Data_in& in, PKT_Basic_Attack& value) const;
+    virtual void write(Data_out& out, PKT_Basic_Attack const& value) const;
+
+    virtual void read(Data_in& in, PKT_Basic_Attack_Pos& value) const;
+    virtual void write(Data_out& out, PKT_Basic_Attack_Pos const& value) const;
+
+    virtual void read(Data_in& in, PKT_BuyItemAns& value) const;
+    virtual void write(Data_out& out, PKT_BuyItemAns const& value) const;
+
+    virtual void read(Data_in& in, PKT_BuyItemReq& value) const;
+    virtual void write(Data_out& out, PKT_BuyItemReq const& value) const;
 
     virtual void read(Data_in& in, PKT_C2S_CharSelected& value) const;
     virtual void write(Data_out& out, PKT_C2S_CharSelected const& value) const;
@@ -129,8 +147,14 @@ public:
     virtual void read(Data_in& in, PKT_C2S_ClientReady& value) const;
     virtual void write(Data_out& out, PKT_C2S_ClientReady const& value) const;
 
+    virtual void read(Data_in& in, PKT_C2S_MapPing& value) const;
+    virtual void write(Data_out& out, PKT_C2S_MapPing const& value) const;
+
     virtual void read(Data_in& in, PKT_C2S_Ping_Load_Info& value) const;
     virtual void write(Data_out& out, PKT_C2S_Ping_Load_Info const& value) const;
+
+    virtual void read(Data_in& in, PKT_C2S_PlayEmote& value) const;
+    virtual void write(Data_out& out, PKT_C2S_PlayEmote const& value) const;
 
     virtual void read(Data_in& in, PKT_C2S_QueryStatusReq& value) const;
     virtual void write(Data_out& out, PKT_C2S_QueryStatusReq const& value) const;
@@ -138,11 +162,32 @@ public:
     virtual void read(Data_in& in, PKT_C2S_Reconnect& value) const;
     virtual void write(Data_out& out, PKT_C2S_Reconnect const& value) const;
 
+    virtual void read(Data_in& in, PKT_NPC_Die& value) const;
+    virtual void write(Data_out& out, PKT_NPC_Die const& value) const;
+
+    virtual void read(Data_in& in, PKT_NPC_LevelUp& value) const;
+    virtual void write(Data_out& out, PKT_NPC_LevelUp const& value) const;
+
     virtual void read(Data_in& in, PKT_NPC_IssueOrderReq& value) const;
     virtual void write(Data_out& out, PKT_NPC_IssueOrderReq const& value) const;
 
+    virtual void read(Data_in& in, PKT_NPC_UpgradeSpellAns& value) const;
+    virtual void write(Data_out& out, PKT_NPC_UpgradeSpellAns const& value) const;
+
+    virtual void read(Data_in& in, PKT_NPC_UpgradeSpellReq& value) const;
+    virtual void write(Data_out& out, PKT_NPC_UpgradeSpellReq const& value) const;
+
     virtual void read(Data_in& in, PKT_OnEnterVisiblityClient& value) const;
     virtual void write(Data_out& out, PKT_OnEnterVisiblityClient const& value) const;
+
+    virtual void read(Data_in& in, PKT_RemoveItemAns& value) const;
+    virtual void write(Data_out& out, PKT_RemoveItemAns const& value) const;
+
+    virtual void read(Data_in& in, PKT_RemoveItemReq& value) const;
+    virtual void write(Data_out& out, PKT_RemoveItemReq const& value) const;
+
+    virtual void read(Data_in& in, PKT_S2C_ChangeCharacterData& value) const;
+    virtual void write(Data_out& out, PKT_S2C_ChangeCharacterData const& value) const;
 
     virtual void read(Data_in& in, PKT_S2C_CreateHero& value) const;
     virtual void write(Data_out& out, PKT_S2C_CreateHero const& value) const;
@@ -150,11 +195,23 @@ public:
     virtual void read(Data_in& in, PKT_S2C_CreateTurret& value) const;
     virtual void write(Data_out& out, PKT_S2C_CreateTurret const& value) const;
 
+    virtual void read(Data_in& in, PKT_S2C_FaceDirection& value) const;
+    virtual void write(Data_out& out, PKT_S2C_FaceDirection const& value) const;
+
     virtual void read(Data_in& in, PKT_S2C_EndSpawn& value) const;
     virtual void write(Data_out& out, PKT_S2C_EndSpawn const& value) const;
 
+    virtual void read(Data_in& in, PKT_S2C_MapPing& value) const;
+    virtual void write(Data_out& out, PKT_S2C_MapPing const& value) const;
+
     virtual void read(Data_in& in, PKT_S2C_Ping_Load_Info& value) const;
     virtual void write(Data_out& out, PKT_S2C_Ping_Load_Info const& value) const;
+
+    virtual void read(Data_in& in, PKT_S2C_PlayAnimation& value) const;
+    virtual void write(Data_out& out, PKT_S2C_PlayAnimation const& value) const;
+
+    virtual void read(Data_in& in, PKT_S2C_PlayEmote& value) const;
+    virtual void write(Data_out& out, PKT_S2C_PlayEmote const& value) const;
 
     virtual void read(Data_in& in, PKT_S2C_QueryStatusAns& value) const;
     virtual void write(Data_out& out, PKT_S2C_QueryStatusAns const& value) const;
@@ -168,6 +225,15 @@ public:
     virtual void read(Data_in& in, PKT_S2C_StartSpawn& value) const;
     virtual void write(Data_out& out, PKT_S2C_StartSpawn const& value) const;
 
+    virtual void read(Data_in& in, PKT_S2C_ToggleFoW& value) const;
+    virtual void write(Data_out& out, PKT_S2C_ToggleFoW const& value) const;
+
+    virtual void read(Data_in& in, PKT_SwapItemAns& value) const;
+    virtual void write(Data_out& out, PKT_SwapItemAns const& value) const;
+
+    virtual void read(Data_in& in, PKT_SwapItemReq& value) const;
+    virtual void write(Data_out& out, PKT_SwapItemReq const& value) const;
+
     virtual void read(Data_in& in, PKT_SynchVersionC2S& value) const;
     virtual void write(Data_out& out, PKT_SynchVersionC2S const& value) const;
 
@@ -177,8 +243,18 @@ public:
     virtual void read(Data_in& in, PKT_WaypointList& value) const;
     virtual void write(Data_out& out, PKT_WaypointList const& value) const;
 
-    virtual void read(Data_in& in, PKT_S2C_FaceDirection& value) const;
-    virtual void write(Data_out& out, PKT_S2C_FaceDirection const& value) const;
+    virtual void read(Data_in& in, PKT_World_LockCamera_Server& value) const;
+    virtual void write(Data_out& out, PKT_World_LockCamera_Server const& value) const;
+
+    virtual void read(Data_in& in, PKT_World_SendCamera_Server& value) const;
+    virtual void write(Data_out& out, PKT_World_SendCamera_Server const& value) const;
+
+    virtual void read(Data_in& in, PKT_World_SendCamera_Server_Acknologment& value) const;
+    virtual void write(Data_out& out, PKT_World_SendCamera_Server_Acknologment const& value) const;
+
+    ProtoNameID const& find_info(std::string_view name, bool is_payload) const;
+
+    ProtoNameID const& find_info(uint16_t id, bool is_payload) const;
 
     PKT_C2S read_pkt(Data_in in, Channel channel) const;
     std::vector<char> write_pkt(PKT_S2C const& pkt) const;

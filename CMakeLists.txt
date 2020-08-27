@@ -24,9 +24,11 @@ add_library(lolsrv_lib STATIC
     lib/enetserver.cpp
     lib/enetserver.hpp
     lib/io.hpp
+    lib/io.cpp
     lib/log.cpp
     lib/log.hpp
     lib/r3d.hpp
+    lib/r3d_ops.hpp
     lib/span.hpp
     )
 target_include_directories(lolsrv_lib PUBLIC lib)
@@ -40,7 +42,6 @@ add_executable(lolsrv
     src/options.cpp
     src/proto.hpp
     src/proto.cpp
-    src/proto/pkt.hpp
     src/proto/proto_0.8.13.26.cpp
     src/proto/proto_0.8.13.26.hpp
     src/proto/proto_0.9.22.14.cpp
@@ -169,6 +170,7 @@ add_executable(lolsrv
     src/proto/proto_1.0.0.131.hpp
     src/proto/proto_base.cpp
     src/proto/proto_base.hpp
+    src/proto/proto_pkt.hpp
     )
 target_link_libraries(lolsrv PRIVATE lolsrv_lib)
 target_include_directories(lolsrv PUBLIC src)
