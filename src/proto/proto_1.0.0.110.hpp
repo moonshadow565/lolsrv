@@ -10,6 +10,6 @@ IMPL_PROTO_VER(PROTO_VER(1.0.0.110), PROTO_VER(1.0.0.109)) {
 
     Span<ProtoNameID const> pkt_array() const override;
 
-    void read(Data_in& in, PlayerLiteInfo& value) const override;
-    void write(Data_out& out, PlayerLiteInfo const& value) const override;
+    void read(Data_in& io, PlayerLiteInfo& value) const override;
+    void write(Data_out& io, PlayerLiteInfo const& value) const override;
 };

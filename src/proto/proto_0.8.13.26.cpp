@@ -138,591 +138,591 @@ Span<ProtoNameID const> ProtoVer::pkt_array() const {
     return info;
 }
 
-void ProtoVer::read(Data_in& in, EGP_ID& value) const {
-    in.read_num<uint8_t>(value);
-    in.read_pad(3);
+void ProtoVer::read(Data_in& io, EGP_ID& value) const {
+    io.num<uint8_t>(value);
+    io.pad(3);
 }
-void ProtoVer::write(Data_out& out, EGP_ID const& value) const {
-    out.write_num<uint8_t>(value);
-    out.write_pad(3);
+void ProtoVer::write(Data_out& io, EGP_ID const& value) const {
+    io.num<uint8_t>(value);
+    io.pad(3);
 }
 
-void ProtoVer::read(Data_in& in, PKT_ID& value) const {
-    in.read_num<uint16_t>(value);
+void ProtoVer::read(Data_in& io, PKT_ID& value) const {
+    io.num<uint16_t>(value);
     uint16_t other = {};
-    in.read_num<uint16_t>(other);
+    io.num<uint16_t>(other);
     if (value == (PKT_ID)0x72) {
         value = (PKT_ID)other;
     }
 }
-void ProtoVer::write(Data_out& out, PKT_ID const& value) const {
-    out.write_num<uint16_t>(value);
-    out.write_num<uint16_t>(value);
+void ProtoVer::write(Data_out& io, PKT_ID const& value) const {
+    io.num<uint16_t>(value);
+    io.num<uint16_t>(value);
 }
 
-void ProtoVer::read(Data_in& in, EGP_RequestJoinTeam& value) const {
-    in.read_num<int32_t>(value.Id_Player);
-    in.read_num<uint32_t>(value.team);
+void ProtoVer::read(Data_in& io, EGP_RequestJoinTeam& value) const {
+    io.num<int32_t>(value.Id_Player);
+    io.num<uint32_t>(value.team);
 }
-void ProtoVer::write(Data_out& out, EGP_RequestJoinTeam const& value) const {
-    out.write_num<int32_t>(value.Id_Player);
-    out.write_num<uint32_t>(value.team);
-}
-
-void ProtoVer::read(Data_in& in, EGP_RequestRename& value) const {
-    in.read_pad(4);
-    in.read_num<int64_t>(value.Id_Player);
-    in.read_num<int32_t>(value.skinID);
-    in.read_szstr(value.buffer);
-}
-void ProtoVer::write(Data_out& out, EGP_RequestRename const& value) const {
-    out.write_pad(4);
-    out.write_num<int64_t>(value.Id_Player);
-    out.write_num<int32_t>(value.skinID);
-    out.write_szstr(value.buffer);
+void ProtoVer::write(Data_out& io, EGP_RequestJoinTeam const& value) const {
+    io.num<int32_t>(value.Id_Player);
+    io.num<uint32_t>(value.team);
 }
 
-void ProtoVer::read(Data_in& in, EGP_RequestReskin& value) const {
-    in.read_pad(4);
-    in.read_num<int64_t>(value.Id_Player);
-    in.read_num<int32_t>(value.skinID);
-    in.read_szstr(value.buffer);
+void ProtoVer::read(Data_in& io, EGP_RequestRename& value) const {
+    io.pad(4);
+    io.num<int64_t>(value.Id_Player);
+    io.num<int32_t>(value.skinID);
+    io.szstr(value.buffer);
 }
-void ProtoVer::write(Data_out& out, EGP_RequestReskin const& value) const {
-    out.write_pad(4);
-    out.write_num<int64_t>(value.Id_Player);
-    out.write_num<int32_t>(value.skinID);
-    out.write_szstr(value.buffer);
-}
-
-void ProtoVer::read(Data_in& in, EGP_Chat& value) const {
-    in.read_zstr(value.message);
-}
-void ProtoVer::write(Data_out& out, EGP_Chat const& value) const {
-    out.write_zstr(value.message);
+void ProtoVer::write(Data_out& io, EGP_RequestRename const& value) const {
+    io.pad(4);
+    io.num<int64_t>(value.Id_Player);
+    io.num<int32_t>(value.skinID);
+    io.szstr(value.buffer);
 }
 
-void ProtoVer::read(Data_in& in, EGP_TeamRosterUpdate& value) const {
-    in.read_num<uint32_t>(value.teamsize_order);
-    in.read_num<uint32_t>(value.teamsize_chaos);
-    in.read_pad(4);
-    in.read_num_array<int64_t>(value.orderMembers);
-    in.read_num_array<int64_t>(value.chaosMembers);
-    in.read_num<uint32_t>(value.current_teamsize_order);
-    in.read_num<uint32_t>(value.current_teamsize_chaos);
+void ProtoVer::read(Data_in& io, EGP_RequestReskin& value) const {
+    io.pad(4);
+    io.num<int64_t>(value.Id_Player);
+    io.num<int32_t>(value.skinID);
+    io.szstr(value.buffer);
 }
-void ProtoVer::write(Data_out& out, EGP_TeamRosterUpdate const& value) const {
-    out.write_num<uint32_t>(value.teamsize_order);
-    out.write_num<uint32_t>(value.teamsize_chaos);
-    out.write_pad(4);
-    out.write_num_array<int64_t>(value.orderMembers);
-    out.write_num_array<int64_t>(value.chaosMembers);
-    out.write_num<uint32_t>(value.current_teamsize_order);
-    out.write_num<uint32_t>(value.current_teamsize_chaos);
+void ProtoVer::write(Data_out& io, EGP_RequestReskin const& value) const {
+    io.pad(4);
+    io.num<int64_t>(value.Id_Player);
+    io.num<int32_t>(value.skinID);
+    io.szstr(value.buffer);
 }
 
-void ProtoVer::read(Data_in& in, CommonBasicAttack& value) const {
-    in.read_num<uint32_t>(value.targetNetId);
-    in.read_num<float>(value.extraTime);
-    in.read_num<uint32_t>(value.missileNextID);
-    in.read_num<uint8_t>(value.attackSlot);
+void ProtoVer::read(Data_in& io, EGP_Chat& value) const {
+    io.zstr(value.message);
 }
-void ProtoVer::write(Data_out& out, CommonBasicAttack const& value) const {
-    out.write_num<uint32_t>(value.targetNetId);
-    out.write_num<float>(value.extraTime);
-    out.write_num<uint32_t>(value.missileNextID);
-    out.write_num<uint8_t>(value.attackSlot);
+void ProtoVer::write(Data_out& io, EGP_Chat const& value) const {
+    io.zstr(value.message);
 }
 
-void ProtoVer::read(Data_in& in, ConnectionInfo& value) const {
-    in.read_num<int32_t>(value.mClientID);
-    in.read_num<int64_t>(value.mPlayerID);
-    in.read_num<float>(value.mPercentage);
-    in.read_num<float>(value.mETA);
-    in.read_bit<uint32_t>(
+void ProtoVer::read(Data_in& io, EGP_TeamRosterUpdate& value) const {
+    io.num<uint32_t>(value.teamsize_order);
+    io.num<uint32_t>(value.teamsize_chaos);
+    io.pad(4);
+    io.num_array<int64_t>(value.orderMembers);
+    io.num_array<int64_t>(value.chaosMembers);
+    io.num<uint32_t>(value.current_teamsize_order);
+    io.num<uint32_t>(value.current_teamsize_chaos);
+}
+void ProtoVer::write(Data_out& io, EGP_TeamRosterUpdate const& value) const {
+    io.num<uint32_t>(value.teamsize_order);
+    io.num<uint32_t>(value.teamsize_chaos);
+    io.pad(4);
+    io.num_array<int64_t>(value.orderMembers);
+    io.num_array<int64_t>(value.chaosMembers);
+    io.num<uint32_t>(value.current_teamsize_order);
+    io.num<uint32_t>(value.current_teamsize_chaos);
+}
+
+void ProtoVer::read(Data_in& io, CommonBasicAttack& value) const {
+    io.num<uint32_t>(value.targetNetId);
+    io.num<float>(value.extraTime);
+    io.num<uint32_t>(value.missileNextID);
+    io.num<uint8_t>(value.attackSlot);
+}
+void ProtoVer::write(Data_out& io, CommonBasicAttack const& value) const {
+    io.num<uint32_t>(value.targetNetId);
+    io.num<float>(value.extraTime);
+    io.num<uint32_t>(value.missileNextID);
+    io.num<uint8_t>(value.attackSlot);
+}
+
+void ProtoVer::read(Data_in& io, ConnectionInfo& value) const {
+    io.num<int32_t>(value.mClientID);
+    io.num<int64_t>(value.mPlayerID);
+    io.num<float>(value.mPercentage);
+    io.num<float>(value.mETA);
+    io.bit<uint32_t>(
                 field<int32_t, 16>(value.mCount),
                 field<uint32_t, 15>(value.mPing),
                 field<uint32_t, 1>(value.mPad));
-    in.read_num<uint8_t>(value.mReady);
-    in.read_zstr(value.mState);
+    io.num<uint8_t>(value.mReady);
+    io.zstr(value.mState);
 }
-void ProtoVer::write(Data_out& out, ConnectionInfo const& value) const {
-    out.write_num<int32_t>(value.mClientID);
-    out.write_num<int64_t>(value.mPlayerID);
-    out.write_num<float>(value.mPercentage);
-    out.write_num<float>(value.mETA);
-    out.write_bit<uint32_t>(
+void ProtoVer::write(Data_out& io, ConnectionInfo const& value) const {
+    io.num<int32_t>(value.mClientID);
+    io.num<int64_t>(value.mPlayerID);
+    io.num<float>(value.mPercentage);
+    io.num<float>(value.mETA);
+    io.bit<uint32_t>(
                 field<int32_t, 16>(value.mCount),
                 field<uint32_t, 15>(value.mPing),
                 field<uint32_t, 1>(value.mPad));
-    out.write_num<uint8_t>(value.mReady);
-    out.write_zstr(value.mState);
+    io.num<uint8_t>(value.mReady);
+    io.zstr(value.mState);
 }
 
-void ProtoVer::read(Data_in& in, PlayerLiteInfo& value) const {
-    in.read_num<int64_t>(value.ID);
-    in.read_num<uint16_t>(value.summonorLevel);
-    in.read_num<uint32_t>(value.summonorSpell1);
-    in.read_num<uint32_t>(value.summonorSpell2);
+void ProtoVer::read(Data_in& io, PlayerLiteInfo& value) const {
+    io.num<int64_t>(value.ID);
+    io.num<uint16_t>(value.summonorLevel);
+    io.num<uint32_t>(value.summonorSpell1);
+    io.num<uint32_t>(value.summonorSpell2);
 }
-void ProtoVer::write(Data_out& out, PlayerLiteInfo const& value) const {
-    out.write_num<int64_t>(value.ID);
-    out.write_num<uint16_t>(value.summonorLevel);
-    out.write_num<uint32_t>(value.summonorSpell1);
-    out.write_num<uint32_t>(value.summonorSpell2);
-}
-
-void ProtoVer::read(Data_in& in, PKT_Basic_Attack& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    read(in, value.data);
-}
-void ProtoVer::write(Data_out& out, PKT_Basic_Attack const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    write(out, value.data);
+void ProtoVer::write(Data_out& io, PlayerLiteInfo const& value) const {
+    io.num<int64_t>(value.ID);
+    io.num<uint16_t>(value.summonorLevel);
+    io.num<uint32_t>(value.summonorSpell1);
+    io.num<uint32_t>(value.summonorSpell2);
 }
 
-void ProtoVer::read(Data_in& in, PKT_Basic_Attack_Pos& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    read(in, value.data);
-    in.read_num<float>(value.pos.x);
-    in.read_pad(4);
-    in.read_num<float>(value.pos.y);
+void ProtoVer::read(Data_in& io, PKT_Basic_Attack& value) const {
+    io.num<uint32_t>(value.fromID);
+    read(io, value.data);
 }
-void ProtoVer::write(Data_out& out, PKT_Basic_Attack_Pos const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    write(out, value.data);
-    out.write_num<float>(value.pos.x);
-    out.write_pad(4);
-    out.write_num<float>(value.pos.y);
+void ProtoVer::write(Data_out& io, PKT_Basic_Attack const& value) const {
+    io.num<uint32_t>(value.fromID);
+    write(io, value.data);
 }
 
-void ProtoVer::read(Data_in& in, PKT_BuyItemAns& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.slot);
-    in.read_num<uint32_t>(value.itemID);
-    in.read_num<uint8_t>(value.itemsInSlot);
+void ProtoVer::read(Data_in& io, PKT_Basic_Attack_Pos& value) const {
+    io.num<uint32_t>(value.fromID);
+    read(io, value.data);
+    io.num<float>(value.pos.x);
+    io.pad(4);
+    io.num<float>(value.pos.y);
 }
-void ProtoVer::write(Data_out& out, PKT_BuyItemAns const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.slot);
-    out.write_num<uint32_t>(value.itemID);
-    out.write_num<uint8_t>(value.itemsInSlot);
-}
-
-void ProtoVer::read(Data_in& in, PKT_BuyItemReq& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.itemID);
-}
-void ProtoVer::write(Data_out& out, PKT_BuyItemReq const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.itemID);
+void ProtoVer::write(Data_out& io, PKT_Basic_Attack_Pos const& value) const {
+    io.num<uint32_t>(value.fromID);
+    write(io, value.data);
+    io.num<float>(value.pos.x);
+    io.pad(4);
+    io.num<float>(value.pos.y);
 }
 
-void ProtoVer::read(Data_in& in, PKT_C2S_CharSelected& value) const {
-    in.read_num<uint32_t>(value.fromID);
+void ProtoVer::read(Data_in& io, PKT_BuyItemAns& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<uint32_t>(value.itemID);
+    io.num<uint8_t>(value.itemsInSlot);
 }
-void ProtoVer::write(Data_out& out, PKT_C2S_CharSelected const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-}
-
-void ProtoVer::read(Data_in& in, PKT_C2S_ClientReady& value) const {
-    in.read_num<uint32_t>(value.fromID);
-}
-void ProtoVer::write(Data_out& out, PKT_C2S_ClientReady const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-}
-
-void ProtoVer::read(Data_in& in, PKT_C2S_MapPing& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_point3d(value.pos);
-    in.read_num<uint32_t>(value.target);
-}
-void ProtoVer::write(Data_out& out, PKT_C2S_MapPing const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_point3d(value.pos);
-    out.write_num<uint32_t>(value.target);
+void ProtoVer::write(Data_out& io, PKT_BuyItemAns const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<uint32_t>(value.itemID);
+    io.num<uint8_t>(value.itemsInSlot);
 }
 
-void ProtoVer::read(Data_in& in, PKT_C2S_Ping_Load_Info& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    read(in, value.mConnectionInfo);
+void ProtoVer::read(Data_in& io, PKT_BuyItemReq& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.itemID);
 }
-void ProtoVer::write(Data_out& out, PKT_C2S_Ping_Load_Info const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    write(out, value.mConnectionInfo);
-}
-
-void ProtoVer::read(Data_in& in, PKT_C2S_PlayEmote& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.mEmoteId);
-}
-void ProtoVer::write(Data_out& out, PKT_C2S_PlayEmote const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.mEmoteId);
+void ProtoVer::write(Data_out& io, PKT_BuyItemReq const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.itemID);
 }
 
-void ProtoVer::read(Data_in& in, PKT_C2S_QueryStatusReq& value) const {
-    in.read_num<uint32_t>(value.fromID);
+void ProtoVer::read(Data_in& io, PKT_C2S_CharSelected& value) const {
+    io.num<uint32_t>(value.fromID);
 }
-void ProtoVer::write(Data_out& out, PKT_C2S_QueryStatusReq const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-}
-
-void ProtoVer::read(Data_in& in, PKT_C2S_Reconnect& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<bool>(value.isFullReconnect);
-}
-void ProtoVer::write(Data_out& out, PKT_C2S_Reconnect const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<bool>(value.isFullReconnect);
+void ProtoVer::write(Data_out& io, PKT_C2S_CharSelected const& value) const {
+    io.num<uint32_t>(value.fromID);
 }
 
-void ProtoVer::read(Data_in& in, PKT_NPC_Die& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.killerNetID);
-    in.read_num<uint8_t>(value.damageType);
-    in.read_num<uint8_t>(value.mSpellSourceType);
-    in.read_num<float>(value.DeathDuration);
+void ProtoVer::read(Data_in& io, PKT_C2S_ClientReady& value) const {
+    io.num<uint32_t>(value.fromID);
 }
-void ProtoVer::write(Data_out& out, PKT_NPC_Die const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.killerNetID);
-    out.write_num<uint8_t>(value.damageType);
-    out.write_num<uint8_t>(value.mSpellSourceType);
-    out.write_num<float>(value.DeathDuration);
+void ProtoVer::write(Data_out& io, PKT_C2S_ClientReady const& value) const {
+    io.num<uint32_t>(value.fromID);
 }
 
-void ProtoVer::read(Data_in& in, PKT_NPC_IssueOrderReq& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.order);
-    in.read_point3d(value.pos);
-    in.read_num<uint32_t>(value.targetNetID);
+void ProtoVer::read(Data_in& io, PKT_C2S_MapPing& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.point3d(value.pos);
+    io.num<uint32_t>(value.target);
 }
-void ProtoVer::write(Data_out& out, PKT_NPC_IssueOrderReq const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.order);
-    out.write_point3d(value.pos);
-    out.write_num<uint32_t>(value.targetNetID);
+void ProtoVer::write(Data_out& io, PKT_C2S_MapPing const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.point3d(value.pos);
+    io.num<uint32_t>(value.target);
 }
 
-void ProtoVer::read(Data_in& in, PKT_NPC_LevelUp& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.mLevel);
-    in.read_num<uint8_t>(value.mPoints);
+void ProtoVer::read(Data_in& io, PKT_C2S_Ping_Load_Info& value) const {
+    io.num<uint32_t>(value.fromID);
+    read(io, value.mConnectionInfo);
 }
-void ProtoVer::write(Data_out& out, PKT_NPC_LevelUp const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.mLevel);
-    out.write_num<uint8_t>(value.mPoints);
+void ProtoVer::write(Data_out& io, PKT_C2S_Ping_Load_Info const& value) const {
+    io.num<uint32_t>(value.fromID);
+    write(io, value.mConnectionInfo);
 }
 
-void ProtoVer::read(Data_in& in, PKT_NPC_UpgradeSpellAns& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.slot);
-    in.read_num<uint8_t>(value.spellLevel);
-    in.read_num<uint8_t>(value.spellTrainingPoints);
+void ProtoVer::read(Data_in& io, PKT_C2S_PlayEmote& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.mEmoteId);
 }
-void ProtoVer::write(Data_out& out, PKT_NPC_UpgradeSpellAns const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.slot);
-    out.write_num<uint8_t>(value.spellLevel);
-    out.write_num<uint8_t>(value.spellTrainingPoints);
+void ProtoVer::write(Data_out& io, PKT_C2S_PlayEmote const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.mEmoteId);
 }
 
-void ProtoVer::read(Data_in& in, PKT_NPC_UpgradeSpellReq& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.slot);
+void ProtoVer::read(Data_in& io, PKT_C2S_QueryStatusReq& value) const {
+    io.num<uint32_t>(value.fromID);
 }
-void ProtoVer::write(Data_out& out, PKT_NPC_UpgradeSpellReq const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.slot);
+void ProtoVer::write(Data_out& io, PKT_C2S_QueryStatusReq const& value) const {
+    io.num<uint32_t>(value.fromID);
 }
 
-void ProtoVer::read(Data_in& in, PKT_OnEnterVisiblityClient& value) const READ_NOT_IMPL
-void ProtoVer::write(Data_out& out, PKT_OnEnterVisiblityClient const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.items.size());
+void ProtoVer::read(Data_in& io, PKT_C2S_Reconnect& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.isFullReconnect);
+}
+void ProtoVer::write(Data_out& io, PKT_C2S_Reconnect const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.isFullReconnect);
+}
+
+void ProtoVer::read(Data_in& io, PKT_NPC_Die& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.killerNetID);
+    io.num<uint8_t>(value.damageType);
+    io.num<uint8_t>(value.mSpellSourceType);
+    io.num<float>(value.DeathDuration);
+}
+void ProtoVer::write(Data_out& io, PKT_NPC_Die const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.killerNetID);
+    io.num<uint8_t>(value.damageType);
+    io.num<uint8_t>(value.mSpellSourceType);
+    io.num<float>(value.DeathDuration);
+}
+
+void ProtoVer::read(Data_in& io, PKT_NPC_IssueOrderReq& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.order);
+    io.point3d(value.pos);
+    io.num<uint32_t>(value.targetNetID);
+}
+void ProtoVer::write(Data_out& io, PKT_NPC_IssueOrderReq const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.order);
+    io.point3d(value.pos);
+    io.num<uint32_t>(value.targetNetID);
+}
+
+void ProtoVer::read(Data_in& io, PKT_NPC_LevelUp& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.mLevel);
+    io.num<uint8_t>(value.mPoints);
+}
+void ProtoVer::write(Data_out& io, PKT_NPC_LevelUp const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.mLevel);
+    io.num<uint8_t>(value.mPoints);
+}
+
+void ProtoVer::read(Data_in& io, PKT_NPC_UpgradeSpellAns& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<uint8_t>(value.spellLevel);
+    io.num<uint8_t>(value.spellTrainingPoints);
+}
+void ProtoVer::write(Data_out& io, PKT_NPC_UpgradeSpellAns const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<uint8_t>(value.spellLevel);
+    io.num<uint8_t>(value.spellTrainingPoints);
+}
+
+void ProtoVer::read(Data_in& io, PKT_NPC_UpgradeSpellReq& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+}
+void ProtoVer::write(Data_out& io, PKT_NPC_UpgradeSpellReq const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+}
+
+void ProtoVer::read(Data_in& io, PKT_OnEnterVisiblityClient& value) const READ_NOT_IMPL
+void ProtoVer::write(Data_out& io, PKT_OnEnterVisiblityClient const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.items.size());
     for (auto const& elem: value.items) {
-        out.write_num<uint8_t>(elem.slot);
-        out.write_num<uint8_t>(elem.itemsInSlot);
-        out.write_num<uint8_t>(elem.spellCharges);
-        out.write_num<uint32_t>(elem.itemID);
+        io.num<uint8_t>(elem.slot);
+        io.num<uint8_t>(elem.itemsInSlot);
+        io.num<uint8_t>(elem.spellCharges);
+        io.num<uint32_t>(elem.itemID);
     }
     if (value.lookat) {
-        out.write_num<uint8_t>(1);
-        out.write_point3d(*value.lookat);
+        io.num<uint8_t>(1);
+        io.point3d(*value.lookat);
     } else {
-        out.write_num<uint8_t>(0);
+        io.num<uint8_t>(0);
     }
     if (value.position) {
-        out.write_num<uint8_t>(3);
-        out.write_num<uint32_t>(value.syncId);
-        out.write_point2d(*value.position);
-        out.write_point2d(*value.position);
+        io.num<uint8_t>(3);
+        io.num<uint32_t>(value.syncId);
+        io.point2d(*value.position);
+        io.point2d(*value.position);
     }
 }
 
-void ProtoVer::read(Data_in& in, PKT_RemoveItemAns& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.slot);
-    in.read_num<uint8_t>(value.itemsInSlot);
+void ProtoVer::read(Data_in& io, PKT_RemoveItemAns& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<uint8_t>(value.itemsInSlot);
 }
-void ProtoVer::write(Data_out& out, PKT_RemoveItemAns const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.slot);
-    out.write_num<uint8_t>(value.itemsInSlot);
-}
-
-void ProtoVer::read(Data_in& in, PKT_RemoveItemReq& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.slot);
-    in.read_num<bool>(value.bSell);
-}
-void ProtoVer::write(Data_out& out, PKT_RemoveItemReq const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.slot);
-    out.write_num<bool>(value.bSell);
+void ProtoVer::write(Data_out& io, PKT_RemoveItemAns const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<uint8_t>(value.itemsInSlot);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_ChangeCharacterData& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.id);
-    in.read_fstr(value.skinName, 64);
+void ProtoVer::read(Data_in& io, PKT_RemoveItemReq& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<bool>(value.bSell);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_ChangeCharacterData const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.id);
-    out.write_fstr(value.skinName, 64);
-}
-
-void ProtoVer::read(Data_in& in, PKT_S2C_CreateHero& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.netObjID);
-    in.read_num<uint8_t>(value.netNodeID);
-    in.read_num<uint32_t>(value.playerUID);
-    in.read_num<bool>(value.teamIsOrder);
-    in.read_num<bool>(value.isBot);
-    in.read_fstr(value.Name, 40);
-    in.read_fstr(value.Skin, 40);
-}
-void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.netObjID);
-    out.write_num<uint8_t>(value.netNodeID);
-    out.write_num<uint32_t>(value.playerUID);
-    out.write_num<bool>(value.teamIsOrder);
-    out.write_num<bool>(value.isBot);
-    out.write_fstr(value.Name, 40);
-    out.write_fstr(value.Skin, 40);
+void ProtoVer::write(Data_out& io, PKT_RemoveItemReq const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.slot);
+    io.num<bool>(value.bSell);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_CreateTurret& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.netObjID);
-    in.read_num<uint8_t>(value.netNodeID);
-    in.read_fstr(value.Name, 64);
+void ProtoVer::read(Data_in& io, PKT_S2C_ChangeCharacterData& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.id);
+    io.fstr(value.skinName, 64);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_CreateTurret const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.netObjID);
-    out.write_num<uint8_t>(value.netNodeID);
-    out.write_fstr(value.Name, 64);
+void ProtoVer::write(Data_out& io, PKT_S2C_ChangeCharacterData const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.id);
+    io.fstr(value.skinName, 64);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_FaceDirection& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_point3d(value.direction);
+void ProtoVer::read(Data_in& io, PKT_S2C_CreateHero& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.netObjID);
+    io.num<uint8_t>(value.netNodeID);
+    io.num<uint32_t>(value.playerUID);
+    io.num<bool>(value.teamIsOrder);
+    io.num<bool>(value.isBot);
+    io.fstr(value.Name, 40);
+    io.fstr(value.Skin, 40);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_FaceDirection const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_point3d(value.direction);
-}
-
-void ProtoVer::read(Data_in& in, PKT_S2C_EndSpawn& value) const {
-    in.read_num<uint32_t>(value.fromID);
-}
-void ProtoVer::write(Data_out& out, PKT_S2C_EndSpawn const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-}
-
-void ProtoVer::read(Data_in& in, PKT_S2C_Ping_Load_Info& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    read(in, value.mConnectionInfo);
-}
-void ProtoVer::write(Data_out& out, PKT_S2C_Ping_Load_Info const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    write(out, value.mConnectionInfo);
+void ProtoVer::write(Data_out& io, PKT_S2C_CreateHero const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.netObjID);
+    io.num<uint8_t>(value.netNodeID);
+    io.num<uint32_t>(value.playerUID);
+    io.num<bool>(value.teamIsOrder);
+    io.num<bool>(value.isBot);
+    io.fstr(value.Name, 40);
+    io.fstr(value.Skin, 40);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_PlayAnimation& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.flags);
-    in.read_num<float>(value.scaleTime);
-    in.read_zstr(value.animationName);
+void ProtoVer::read(Data_in& io, PKT_S2C_CreateTurret& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.netObjID);
+    io.num<uint8_t>(value.netNodeID);
+    io.fstr(value.Name, 64);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_PlayAnimation const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.flags);
-    out.write_num<float>(value.scaleTime);
-    out.write_zstr(value.animationName);
-}
-
-void ProtoVer::read(Data_in& in, PKT_S2C_PlayEmote& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.mEmoteId);
-}
-void ProtoVer::write(Data_out& out, PKT_S2C_PlayEmote const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.mEmoteId);
+void ProtoVer::write(Data_out& io, PKT_S2C_CreateTurret const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.netObjID);
+    io.num<uint8_t>(value.netNodeID);
+    io.fstr(value.Name, 64);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_MapPing& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_point3d(value.pos);
-    in.read_num<uint32_t>(value.target);
-    in.read_num<uint32_t>(value.src);
+void ProtoVer::read(Data_in& io, PKT_S2C_FaceDirection& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.point3d(value.direction);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_MapPing const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_point3d(value.pos);
-    out.write_num<uint32_t>(value.target);
-    out.write_num<uint32_t>(value.src);
+void ProtoVer::write(Data_out& io, PKT_S2C_FaceDirection const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.point3d(value.direction);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_QueryStatusAns& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<bool>(value.ok);
+void ProtoVer::read(Data_in& io, PKT_S2C_EndSpawn& value) const {
+    io.num<uint32_t>(value.fromID);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_QueryStatusAns const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<bool>(value.ok);
+void ProtoVer::write(Data_out& io, PKT_S2C_EndSpawn const& value) const {
+    io.num<uint32_t>(value.fromID);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_Reconnect& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<int32_t>(value.cid);
+void ProtoVer::read(Data_in& io, PKT_S2C_Ping_Load_Info& value) const {
+    io.num<uint32_t>(value.fromID);
+    read(io, value.mConnectionInfo);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_Reconnect const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<int32_t>(value.cid);
-}
-
-void ProtoVer::read(Data_in& in, PKT_S2C_StartGame& value) const {
-    in.read_num<uint32_t>(value.fromID);
-}
-void ProtoVer::write(Data_out& out, PKT_S2C_StartGame const& value) const {
-    out.write_num<uint32_t>(value.fromID);
+void ProtoVer::write(Data_out& io, PKT_S2C_Ping_Load_Info const& value) const {
+    io.num<uint32_t>(value.fromID);
+    write(io, value.mConnectionInfo);
 }
 
-void ProtoVer::read(Data_in& in, PKT_SwapItemAns& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.source);
-    in.read_num<uint8_t>(value.dest);
+void ProtoVer::read(Data_in& io, PKT_S2C_PlayAnimation& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.flags);
+    io.num<float>(value.scaleTime);
+    io.zstr(value.animationName);
 }
-void ProtoVer::write(Data_out& out, PKT_SwapItemAns const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.source);
-    out.write_num<uint8_t>(value.dest);
-}
-
-void ProtoVer::read(Data_in& in, PKT_SwapItemReq& value) const {
-    in.read_num<uint32_t>(value.fromID);
-}
-void ProtoVer::write(Data_out& out, PKT_SwapItemReq const& value) const {
-    out.write_num<uint32_t>(value.fromID);
+void ProtoVer::write(Data_out& io, PKT_S2C_PlayAnimation const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.flags);
+    io.num<float>(value.scaleTime);
+    io.zstr(value.animationName);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_StartSpawn& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint8_t>(value.numBotsOrder);
-    in.read_num<uint8_t>(value.numBotsChaos);
+void ProtoVer::read(Data_in& io, PKT_S2C_PlayEmote& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.mEmoteId);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_StartSpawn const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint8_t>(value.numBotsOrder);
-    out.write_num<uint8_t>(value.numBotsChaos);
+void ProtoVer::write(Data_out& io, PKT_S2C_PlayEmote const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.mEmoteId);
 }
 
-void ProtoVer::read(Data_in& in, PKT_SynchVersionC2S& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<float>(value.mTime_LastClient);
-    in.read_num<uint32_t>(value.mClientNetID);
-    in.read_fstr(value.mVersionString, 256);
+void ProtoVer::read(Data_in& io, PKT_S2C_MapPing& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.point3d(value.pos);
+    io.num<uint32_t>(value.target);
+    io.num<uint32_t>(value.src);
 }
-void ProtoVer::write(Data_out& out, PKT_SynchVersionC2S const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<float>(value.mTime_LastClient);
-    out.write_num<uint32_t>(value.mClientNetID);
-    out.write_fstr(value.mVersionString, 256);
+void ProtoVer::write(Data_out& io, PKT_S2C_MapPing const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.point3d(value.pos);
+    io.num<uint32_t>(value.target);
+    io.num<uint32_t>(value.src);
 }
 
-void ProtoVer::read(Data_in& in, PKT_SynchVersionS2C& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<bool>(value.mIsVersionOk);
-    in.read_num<int32_t>(value.mMapToLoad);
+void ProtoVer::read(Data_in& io, PKT_S2C_QueryStatusAns& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.ok);
+}
+void ProtoVer::write(Data_out& io, PKT_S2C_QueryStatusAns const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.ok);
+}
+
+void ProtoVer::read(Data_in& io, PKT_S2C_Reconnect& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<int32_t>(value.cid);
+}
+void ProtoVer::write(Data_out& io, PKT_S2C_Reconnect const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<int32_t>(value.cid);
+}
+
+void ProtoVer::read(Data_in& io, PKT_S2C_StartGame& value) const {
+    io.num<uint32_t>(value.fromID);
+}
+void ProtoVer::write(Data_out& io, PKT_S2C_StartGame const& value) const {
+    io.num<uint32_t>(value.fromID);
+}
+
+void ProtoVer::read(Data_in& io, PKT_SwapItemAns& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.source);
+    io.num<uint8_t>(value.dest);
+}
+void ProtoVer::write(Data_out& io, PKT_SwapItemAns const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.source);
+    io.num<uint8_t>(value.dest);
+}
+
+void ProtoVer::read(Data_in& io, PKT_SwapItemReq& value) const {
+    io.num<uint32_t>(value.fromID);
+}
+void ProtoVer::write(Data_out& io, PKT_SwapItemReq const& value) const {
+    io.num<uint32_t>(value.fromID);
+}
+
+void ProtoVer::read(Data_in& io, PKT_S2C_StartSpawn& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.numBotsOrder);
+    io.num<uint8_t>(value.numBotsChaos);
+}
+void ProtoVer::write(Data_out& io, PKT_S2C_StartSpawn const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint8_t>(value.numBotsOrder);
+    io.num<uint8_t>(value.numBotsChaos);
+}
+
+void ProtoVer::read(Data_in& io, PKT_SynchVersionC2S& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<float>(value.mTime_LastClient);
+    io.num<uint32_t>(value.mClientNetID);
+    io.fstr(value.mVersionString, 256);
+}
+void ProtoVer::write(Data_out& io, PKT_SynchVersionC2S const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<float>(value.mTime_LastClient);
+    io.num<uint32_t>(value.mClientNetID);
+    io.fstr(value.mVersionString, 256);
+}
+
+void ProtoVer::read(Data_in& io, PKT_SynchVersionS2C& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.mIsVersionOk);
+    io.num<int32_t>(value.mMapToLoad);
     for(auto& elem: value.playerInfo) {
-        read(in, elem);
+        read(io, elem);
     }
-    in.read_fstr(value.mVersionString, 256);
+    io.fstr(value.mVersionString, 256);
 }
-void ProtoVer::write(Data_out& out, PKT_SynchVersionS2C const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<bool>(value.mIsVersionOk);
-    out.write_num<int32_t>(value.mMapToLoad);
+void ProtoVer::write(Data_out& io, PKT_SynchVersionS2C const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.mIsVersionOk);
+    io.num<int32_t>(value.mMapToLoad);
     for(auto const& elem: value.playerInfo) {
-        write(out, elem);
+        write(io, elem);
     }
-    out.write_fstr(value.mVersionString, 256);
+    io.fstr(value.mVersionString, 256);
 }
 
-void ProtoVer::read(Data_in& in, PKT_WaypointList& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.syncID);
+void ProtoVer::read(Data_in& io, PKT_WaypointList& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.syncID);
     value.list.clear();
-    in.read_until_end([&] {
+    io.until_end([&] {
         r3dPoint2D elem = {};
-        in.read_point2d(elem);
+        io.point2d(elem);
         value.list.push_back(elem);
     });
 }
-void ProtoVer::write(Data_out& out, PKT_WaypointList const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.syncID);
+void ProtoVer::write(Data_out& io, PKT_WaypointList const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.syncID);
     for(auto const& elem: value.list) {
-        out.write_point2d(elem);
+        io.point2d(elem);
     }
 }
 
-void ProtoVer::read(Data_in& in, PKT_World_LockCamera_Server& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<bool>(value.lockCamera);
-    in.read_num<int32_t>(value.clientID);
+void ProtoVer::read(Data_in& io, PKT_World_LockCamera_Server& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.lockCamera);
+    io.num<int32_t>(value.clientID);
 }
-void ProtoVer::write(Data_out& out, PKT_World_LockCamera_Server const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<bool>(value.lockCamera);
-    out.write_num<int32_t>(value.clientID);
-}
-
-void ProtoVer::read(Data_in& in, PKT_World_SendCamera_Server& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<int8_t>(value.syncID);
-}
-void ProtoVer::write(Data_out& out, PKT_World_SendCamera_Server const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_point3d(value.cameraPos);
-    out.write_point3d(value.cameraDir);
-    out.write_num<int32_t>(value.clientID);
-    out.write_num<int8_t>(value.syncID);
+void ProtoVer::write(Data_out& io, PKT_World_LockCamera_Server const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<bool>(value.lockCamera);
+    io.num<int32_t>(value.clientID);
 }
 
-void ProtoVer::read(Data_in& in, PKT_World_SendCamera_Server_Acknologment& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<int8_t>(value.syncID);
+void ProtoVer::read(Data_in& io, PKT_World_SendCamera_Server& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<int8_t>(value.syncID);
 }
-void ProtoVer::write(Data_out& out, PKT_World_SendCamera_Server_Acknologment const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<int8_t>(value.syncID);
+void ProtoVer::write(Data_out& io, PKT_World_SendCamera_Server const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.point3d(value.cameraPos);
+    io.point3d(value.cameraDir);
+    io.num<int32_t>(value.clientID);
+    io.num<int8_t>(value.syncID);
+}
+
+void ProtoVer::read(Data_in& io, PKT_World_SendCamera_Server_Acknologment& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<int8_t>(value.syncID);
+}
+void ProtoVer::write(Data_out& io, PKT_World_SendCamera_Server_Acknologment const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<int8_t>(value.syncID);
 }
 
 

@@ -159,47 +159,47 @@ Span<ProtoNameID const> ProtoVer::pkt_array() const {
     return info;
 };
 
-void ProtoVer::read(Data_in& in, PKT_ID& value) const {
-    in.read_num<uint8_t>(value);
-    in.read_pad(3);
+void ProtoVer::read(Data_in& io, PKT_ID& value) const {
+    io.num<uint8_t>(value);
+    io.pad(3);
 }
-void ProtoVer::write(Data_out& out, PKT_ID const& value) const {
-    out.write_num<uint8_t>(value);
-    out.write_pad(3);
-}
-
-void ProtoVer::read(Data_in& in, EGP_Chat& value) const {
-    in.read_num<int32_t>(value.clientID);
-    in.read_num<uint32_t>(value.chatType);
-    in.read_szstr(value.message);
-}
-void ProtoVer::write(Data_out& out, EGP_Chat const& value) const {
-    out.write_num<int32_t>(value.clientID);
-    out.write_num<uint32_t>(value.chatType);
-    out.write_szstr(value.message);
+void ProtoVer::write(Data_out& io, PKT_ID const& value) const {
+    io.num<uint8_t>(value);
+    io.pad(3);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_CreateHero& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_num<uint32_t>(value.netObjID);
-    in.read_num<uint32_t>(value.playerUID);
-    in.read_num<uint8_t>(value.netNodeID);
-    in.read_num<uint8_t>(value.skillLevel);
-    in.read_num<bool>(value.teamIsOrder);
-    in.read_num<bool>(value.isBot);
-    in.read_num<int32_t>(value.skinID);
-    in.read_fstr(value.Name, 40);
-    in.read_fstr(value.Skin, 40);
+void ProtoVer::read(Data_in& io, EGP_Chat& value) const {
+    io.num<int32_t>(value.clientID);
+    io.num<uint32_t>(value.chatType);
+    io.szstr(value.message);
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_CreateHero const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_num<uint32_t>(value.netObjID);
-    out.write_num<uint32_t>(value.playerUID);
-    out.write_num<uint8_t>(value.netNodeID);
-    out.write_num<uint8_t>(value.skillLevel);
-    out.write_num<bool>(value.teamIsOrder);
-    out.write_num<bool>(value.isBot);
-    out.write_num<int32_t>(value.skinID);
-    out.write_fstr(value.Name, 40);
-    out.write_fstr(value.Skin, 40);
+void ProtoVer::write(Data_out& io, EGP_Chat const& value) const {
+    io.num<int32_t>(value.clientID);
+    io.num<uint32_t>(value.chatType);
+    io.szstr(value.message);
+}
+
+void ProtoVer::read(Data_in& io, PKT_S2C_CreateHero& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.netObjID);
+    io.num<uint32_t>(value.playerUID);
+    io.num<uint8_t>(value.netNodeID);
+    io.num<uint8_t>(value.skillLevel);
+    io.num<bool>(value.teamIsOrder);
+    io.num<bool>(value.isBot);
+    io.num<int32_t>(value.skinID);
+    io.fstr(value.Name, 40);
+    io.fstr(value.Skin, 40);
+}
+void ProtoVer::write(Data_out& io, PKT_S2C_CreateHero const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.num<uint32_t>(value.netObjID);
+    io.num<uint32_t>(value.playerUID);
+    io.num<uint8_t>(value.netNodeID);
+    io.num<uint8_t>(value.skillLevel);
+    io.num<bool>(value.teamIsOrder);
+    io.num<bool>(value.isBot);
+    io.num<int32_t>(value.skinID);
+    io.fstr(value.Name, 40);
+    io.fstr(value.Skin, 40);
 }

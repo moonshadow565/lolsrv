@@ -253,36 +253,36 @@ Span<ProtoNameID const> ProtoVer::pkt_array() const {
     return info;
 }
 
-void ProtoVer::read(Data_in& in, PlayerLiteInfo& value) const {
-    in.read_num<int64_t>(value.ID);
-    in.read_num<uint16_t>(value.summonorLevel);
-    in.read_num<uint32_t>(value.summonorSpell1);
-    in.read_num<uint32_t>(value.summonorSpell2);
-    in.read_num<bool>(value.isBot);
-    in.read_num<uint32_t>(value.teamId);
-    in.read_fstr(value.botName, 28);
-    in.read_fstr(value.skinName, 28);
-    in.read_num<uint32_t>(value.botDifficulty);
-    in.read_num<uint32_t>(value.profileIconId);
+void ProtoVer::read(Data_in& io, PlayerLiteInfo& value) const {
+    io.num<int64_t>(value.ID);
+    io.num<uint16_t>(value.summonorLevel);
+    io.num<uint32_t>(value.summonorSpell1);
+    io.num<uint32_t>(value.summonorSpell2);
+    io.num<bool>(value.isBot);
+    io.num<uint32_t>(value.teamId);
+    io.fstr(value.botName, 28);
+    io.fstr(value.skinName, 28);
+    io.num<uint32_t>(value.botDifficulty);
+    io.num<uint32_t>(value.profileIconId);
 }
-void ProtoVer::write(Data_out& out, PlayerLiteInfo const& value) const {
-    out.write_num<int64_t>(value.ID);
-    out.write_num<uint16_t>(value.summonorLevel);
-    out.write_num<uint32_t>(value.summonorSpell1);
-    out.write_num<uint32_t>(value.summonorSpell2);
-    out.write_num<bool>(value.isBot);
-    out.write_num<uint32_t>(value.teamId);
-    out.write_fstr(value.botName, 28);
-    out.write_fstr(value.skinName, 28);
-    out.write_num<uint32_t>(value.botDifficulty);
-    out.write_num<uint32_t>(value.profileIconId);
+void ProtoVer::write(Data_out& io, PlayerLiteInfo const& value) const {
+    io.num<int64_t>(value.ID);
+    io.num<uint16_t>(value.summonorLevel);
+    io.num<uint32_t>(value.summonorSpell1);
+    io.num<uint32_t>(value.summonorSpell2);
+    io.num<bool>(value.isBot);
+    io.num<uint32_t>(value.teamId);
+    io.fstr(value.botName, 28);
+    io.fstr(value.skinName, 28);
+    io.num<uint32_t>(value.botDifficulty);
+    io.num<uint32_t>(value.profileIconId);
 }
 
-void ProtoVer::read(Data_in& in, PKT_S2C_StartGame& value) const {
-    in.read_num<uint32_t>(value.fromID);
-    in.read_bit<uint8_t>(field<uint8_t, 1>(value.tournamentEnabled));
+void ProtoVer::read(Data_in& io, PKT_S2C_StartGame& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.bit<uint8_t>(field<uint8_t, 1>(value.tournamentEnabled));
 }
-void ProtoVer::write(Data_out& out, PKT_S2C_StartGame const& value) const {
-    out.write_num<uint32_t>(value.fromID);
-    out.write_bit<uint8_t>(field<uint8_t, 1>(value.tournamentEnabled));
+void ProtoVer::write(Data_out& io, PKT_S2C_StartGame const& value) const {
+    io.num<uint32_t>(value.fromID);
+    io.bit<uint8_t>(field<uint8_t, 1>(value.tournamentEnabled));
 }

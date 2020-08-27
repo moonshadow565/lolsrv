@@ -196,32 +196,32 @@ Span<ProtoNameID const> ProtoVer::pkt_array() const {
     return info;
 }
 
-void ProtoVer::read(Data_in& in, PKT_ID& value) const {
-    in.read_num<uint8_t>(value);
+void ProtoVer::read(Data_in& io, PKT_ID& value) const {
+    io.num<uint8_t>(value);
 }
-void ProtoVer::write(Data_out& out, PKT_ID const& value) const {
-    out.write_num<uint8_t>(value);
+void ProtoVer::write(Data_out& io, PKT_ID const& value) const {
+    io.num<uint8_t>(value);
 }
 
-void ProtoVer::read(Data_in& in, ConnectionInfo& value) const {
-    in.read_num<int32_t>(value.mClientID);
-    in.read_num<int64_t>(value.mPlayerID);
-    in.read_num<float>(value.mPercentage);
-    in.read_num<float>(value.mETA);
-    in.read_bit<uint32_t>(
+void ProtoVer::read(Data_in& io, ConnectionInfo& value) const {
+    io.num<int32_t>(value.mClientID);
+    io.num<int64_t>(value.mPlayerID);
+    io.num<float>(value.mPercentage);
+    io.num<float>(value.mETA);
+    io.bit<uint32_t>(
                 field<int32_t, 16>(value.mCount),
                 field<uint32_t, 15>(value.mPing),
                 field<uint32_t, 1>(value.mPad));
-    in.read_num<uint8_t>(value.mReady);
+    io.num<uint8_t>(value.mReady);
 }
-void ProtoVer::write(Data_out& out, ConnectionInfo const& value) const {
-    out.write_num<int32_t>(value.mClientID);
-    out.write_num<int64_t>(value.mPlayerID);
-    out.write_num<float>(value.mPercentage);
-    out.write_num<float>(value.mETA);
-    out.write_bit<uint32_t>(
+void ProtoVer::write(Data_out& io, ConnectionInfo const& value) const {
+    io.num<int32_t>(value.mClientID);
+    io.num<int64_t>(value.mPlayerID);
+    io.num<float>(value.mPercentage);
+    io.num<float>(value.mETA);
+    io.bit<uint32_t>(
                 field<int32_t, 16>(value.mCount),
                 field<uint32_t, 15>(value.mPing),
                 field<uint32_t, 1>(value.mPad));
-    out.write_num<uint8_t>(value.mReady);
+    io.num<uint8_t>(value.mReady);
 }
