@@ -48,7 +48,7 @@ Options::Options(int argc, char** argv) {
                 }
                 return std::stoi(v);
             })
-            .default_value((int)LLOG_ERROR);
+            .default_value((int)LLOG_WARNING);
     try {
         program.parse_args(argc, argv);
         protocol = program.get<std::string>("protocol");

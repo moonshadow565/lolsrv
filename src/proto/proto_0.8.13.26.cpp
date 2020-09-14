@@ -456,7 +456,7 @@ void ProtoVer::write(Data_out& io, PKT_OnEnterVisiblityClient const& value) cons
     }
     if (value.position) {
         io.num<uint8_t>(3);
-        io.num<uint32_t>(value.syncId);
+        io.num<uint32_t>(value.syncID);
         io.point2d(*value.position);
         io.point2d(*value.position);
     }
@@ -724,7 +724,6 @@ void ProtoVer::write(Data_out& io, PKT_World_SendCamera_Server_Acknologment cons
     io.num<uint32_t>(value.fromID);
     io.num<int8_t>(value.syncID);
 }
-
 
 /*
 TODO Upgrade:

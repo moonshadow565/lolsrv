@@ -28,8 +28,7 @@ void Data_in::pad(size_t S) {
 void Data_in::zstr(std::string& value) {
     value.clear();
     while (cur != end) {
-        char c = *cur;
-        cur++;
+        char c = *cur++;
         if (c == '\0') {
             break;
         }
@@ -39,8 +38,8 @@ void Data_in::zstr(std::string& value) {
 
 void Data_in::fstr(std::string& value, size_t S) {
     check_space(S);
-    value.resize(S);
     value.clear();
+    value.resize(S);
     std::memcpy(value.data(), cur, S);
     cur += S;
     auto const zero = value.find('\0');
@@ -52,8 +51,8 @@ void Data_in::fstr(std::string& value, size_t S) {
 void Data_in::sstr(std::string& value) {
     uint32_t size = {};
     num<uint32_t>(size);
-    value.resize(size);
     value.clear();
+    value.resize(size);
     raw(value.data(), size);
     cur += size;
     auto const zero = value.find('\0');
@@ -72,6 +71,10 @@ void Data_out::raw(void const* data, size_t size) {
 
 void Data_out::pad(size_t size) {
     buffer.insert(buffer.end(), size, '\0');
+}
+
+void Data_out::zstr(std::string const& value) {
+    raw(value.data(), value.size() + 1);
 }
 
 void Data_out::point2d(const r3dPoint2D& value) {

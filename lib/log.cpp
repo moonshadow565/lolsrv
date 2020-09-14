@@ -5,7 +5,7 @@
 #include <string>
 #include <charconv>
 
-int Logger::currentLevel = LLOG_DEBUG;
+int Logger::currentLevel = LLOG_WARNING;
 
 void Logger::Log(int const level, char const* const func, char const* const format, ...) noexcept {
     if (level > currentLevel) {

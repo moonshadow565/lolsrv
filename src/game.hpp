@@ -1,16 +1,33 @@
 #pragma once
-#include "proto/proto_pkt.hpp"
+#include "proto_pkt.hpp"
+#include "json.hpp"
 #include "options.hpp"
 #include <log.hpp>
 #include <functional>
+#include <map>
 
 struct Game {
-    std::function<void(int32_t cid, PKT_S2C const&)> send_packet;
     Options const& options;
+    std::function<void(int32_t cid, PKT_S2C const&)> send_packet_impl = {};
+    std::map<std::string, std::function<std::string(int32_t cid, std::string data)>> commands = {};
+    std::map<int32_t, std::string> command_buffer = {};
     uint32_t syncId = {};
     r3dPoint2D lastPos = {};
+    r3dPoint3D lastPingPos = {};
+    uint32_t lastPingNetID = {};
+    uint32_t lastSelectNetID = {};
 
     Game(Options const& aoptions);
+
+    void parse_command(int32_t cid, std::string_view data);
+
+    void send_packet(int32_t cid, PKT_S2C pkt);
+
+    Json::Object build_replacements(int32_t cid, std::string_view repl_data);
+
+    void send_data(int32_t cid, std::string name, std::string data);
+
+    bool send_file(int32_t cid, std::string filename, std::string repl_data = "");
 
     void on_update();
 

@@ -203,3 +203,10 @@ void ProtoVer::write(Data_out& io, PKT_S2C_CreateHero const& value) const {
     io.fstr(value.Name, 40);
     io.fstr(value.Skin, 40);
 }
+
+void ProtoVer::read(Data_in& io, PKT_S2C_ToggleFoW& value) const {
+    io.num<uint32_t>(value.fromID);
+}
+void ProtoVer::write(Data_out& io, PKT_S2C_ToggleFoW const& value) const {
+    io.num<uint32_t>(value.fromID);
+}

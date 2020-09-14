@@ -176,9 +176,7 @@ ProtoNameID const& ProtoVer::find_info(uint16_t id, bool is_payload) const {
 template<typename T, typename...V>
 inline bool read_impl_one(ProtoVer const* proto, Data_in& io, std::string_view name, std::variant<V...>& value) {
     if (name == type_name<T>()) {
-        T result = {};
-        proto->read(io, result);
-        value = std::move(result);
+        proto->read(io, value.template emplace<T>());
         return true;
     } else {
         return false;

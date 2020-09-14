@@ -68,9 +68,9 @@ void ENetServer::send_raw(int32_t cid, void const *pkt, size_t size, uint8_t cha
     if (i == peers.end()) {
         return;
     }
-    uint8_t packetId = size ? (uint8_t)(*((char const*)pkt)) : 0;
-    LOG_DEBUG("Sending packet on %u to %u: 0x%02X, size : %u", channel, cid, packetId, size);
-    if (Logger::currentLevel >= LogLevel::LLOG_TRACE) {
+    if (Logger::currentLevel >= LogLevel::LLOG_DEBUG) {
+        uint8_t packetId = size ? (uint8_t)(*((char const*)pkt)) : 0;
+        LOG_TRACE("Sending packet on %u to %u: 0x%02X, size : %u", channel, cid, packetId, size);
         puts(to_hex({(char const* )pkt, (char const*)pkt + size}).c_str());
     }
     auto packet = enet_packet_create(pkt, size, flags & ~ENET_PACKET_FLAG_NO_ALLOCATE);
@@ -106,9 +106,9 @@ bool ENetServer::route_auth(ENetPeer *peer, ENetPacket const* packet) {
 void ENetServer::route_packet(int32_t cid, uint8_t channel, ENetPacket const* packet) {
     std::vector data = std::vector<char>((char const*)(packet->data), (char const*)(packet->data + packet->dataLength));
     blowfish.decrypt(data.data(), data.size());
-    uint8_t packetId = data.size() ? (uint8_t)(data[0]) : 0;
-    LOG_DEBUG("Reading packet on %u from %u: 0x%02X, size : %u", channel, cid, packetId, packet->dataLength);
-    if (Logger::currentLevel >= LogLevel::LLOG_TRACE) {
+    if (Logger::currentLevel >= LogLevel::LLOG_DEBUG) {
+        uint8_t packetId = data.size() ? (uint8_t)(data[0]) : 0;
+        LOG_TRACE("Reading packet on %u from %u: 0x%02X, size : %u", channel, cid, packetId, packet->dataLength);
         puts(to_hex(data).c_str());
     }
     if (onPacket) {

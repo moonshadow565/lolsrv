@@ -1,5 +1,5 @@
 #pragma once
-#include "proto_base.hpp"
+#include "../proto_base.hpp"
 
 IMPL_PROTO_VER(PROTO_VER(0.8.13.26), ProtoBase) {
     public:

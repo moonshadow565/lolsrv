@@ -1,5 +1,6 @@
 #include <iterator>
 #include <algorithm>
+#include <unordered_set>
 #include <log.hpp>
 #include <enetserver.hpp>
 #include "proto.hpp"
@@ -13,9 +14,10 @@ private:
     Game game;
     ENetServer server;
 
-    static inline constexpr std::string_view IGNORE_C2S_WARNINGS[] = {
+    static inline std::unordered_set<std::string_view> IGNORE_LOG = {
         "PKT_Waypoint_Acc",
         "PKT_World_SendCamera_Server",
+        "PKT_World_SendCamera_Server_Acknologment",
         "PKT_World_LockCamera_Server",
         "PKT_SendSelectedObjID",
     };
@@ -34,13 +36,15 @@ public:
             }
             exit(-1);
         }
+        LOG_INFO("Protocol: %s\n", options.protocol.c_str());
     }
 
     void send_packet(int32_t cid, PKT_S2C const& pkt) {
-        std::string name = {};
-        auto channel = std::visit([&](auto const& pkt){
+        auto channel = std::visit([&](auto const& pkt) {
             using T = std::remove_cvref_t<decltype(pkt)>;
-            LOG_INFO("sending: %s", std::string(type_name<T>()).c_str());
+            if (auto name = type_name<T>(); !IGNORE_LOG.contains(name)) {
+                LOG_VERBOSE("sending: %s", std::string(name).c_str());
+            }
             if constexpr (std::is_base_of_v<DefaultPacket, T>) {
                return CHANNEL_GENERIC_APP_BROADCAST;
             } else {
@@ -51,11 +55,13 @@ public:
             auto data = protocol->write_pkt(pkt);
             server.send_raw(cid, data.data(), data.size(), channel, ENET_PACKET_FLAG_RELIABLE);
         } catch(ProtoErrorNoID const& err) {
-            LOG_ERROR("ProtoErrorNoID: %s", err.name.data());
+            LOG_ERROR("ProtoErrorNoID: %s", err.name.c_str());
         } catch(ProtoErrorIO const& err) {
-            LOG_ERROR("ProtoErrorIO: %s @ %d", err.name.data(), (int32_t)err.position);
+            LOG_ERROR("ProtoErrorIO: %s @ %d", err.name.c_str(), (int32_t)err.position);
         } catch(ProtoErrorWriteNotImpl const& err) {
-            LOG_ERROR("ProtoErrorWriteNotImpl: %s", err.name.data());
+            if (!IGNORE_LOG.contains(err.name)) {
+                LOG_ERROR("ProtoErrorWriteNotImpl: %s", err.name.c_str());
+            }
         } catch(std::exception const& err) {
             LOG_ERROR("std::exception: %s", err.what());
         }
@@ -66,7 +72,7 @@ public:
     }
 
     void on_connected(int32_t cid) {
-        LOG_INFO("Peer: %d", cid);
+        LOG_VERBOSE("Peer: %d", cid);
         try {
             game.on_connected(cid);
         } catch(std::exception const& err) {
@@ -75,7 +81,7 @@ public:
     }
 
     void on_disconnected(int32_t cid) {
-        LOG_INFO("Peer: %d", cid);
+        LOG_VERBOSE("Peer: %d", cid);
         try {
             game.on_disconnected(cid);
         } catch(std::exception const& err) {
@@ -91,18 +97,20 @@ public:
             auto pkt = protocol->read_pkt(Data_in{data, size}, (Channel)channel);
             std::visit([&](auto const& pkt) {
                 using T = std::remove_cv_t<std::remove_reference_t<decltype(pkt)>>;
-                LOG_INFO("reading: %s", std::string(type_name<T>()).c_str());
+                if (auto name = type_name<T>(); !IGNORE_LOG.contains(name)) {
+                    LOG_VERBOSE("reading: %s", std::string(name).c_str());
+                }
                 game.on_packet(cid, pkt);
             }, pkt);
         } catch (ProtoErrorBadChannel const& err) {
             LOG_ERROR("ProtoErrorBadChannel: %u", err.channel);
         } catch(ProtoErrorIO const& err) {
-            LOG_ERROR("ProtoErrorIO: %s @ %d", err.name.data(), (int32_t)err.position);
+            LOG_ERROR("ProtoErrorIO: %s @ %d", err.name.c_str(), (int32_t)err.position);
         } catch (ProtoErrorUnknownID const& err) {
             LOG_ERROR("ProtoErrorUnknownID: %u", err.id);
         } catch (ProtoErrorReadNotImpl const& err) {
-            if (std::find(std::begin(IGNORE_C2S_WARNINGS), std::end(IGNORE_C2S_WARNINGS), err.name) == std::end(IGNORE_C2S_WARNINGS)) {
-                LOG_WARNING("ProtoErrorReadNotImpl: %s", err.name.data());
+            if (!IGNORE_LOG.contains(err.name)) {
+                LOG_WARNING("ProtoErrorReadNotImpl: %s", err.name.c_str());
             }
         } catch(std::exception const& err) {
             LOG_ERROR("std::exception: %s", err.what());
@@ -110,8 +118,8 @@ public:
     }
 
     void run() {
-        LOG_INFO("started!");
-        game.send_packet = std::bind_front(&App::send_packet, this);
+        LOG_INFO("Running!");
+        game.send_packet_impl = std::bind_front(&App::send_packet, this);
         server.onNone = std::bind_front(&App::on_none, this);
         server.onConnected = std::bind_front(&App::on_connected, this);
         server.onDisconnected = std::bind_front(&App::on_disconnected, this);

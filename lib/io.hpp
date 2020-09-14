@@ -61,11 +61,11 @@ struct Data_in {
     void point3d(r3dPoint3D& value);
 
     template<typename C, typename T, size_t S>
-    inline void num_array(T(&array)[S]) {
+    inline void num_array(std::array<T, S> &array) {
         static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
         static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
         if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            raw(array, sizeof(array));
+            raw(array.data(), sizeof(array));
         } else {
             for(auto& value: array) {
                 num<C>(value);
@@ -131,11 +131,11 @@ struct Data_out {
     void point3d(r3dPoint3D const& value);
 
     template<typename C, typename T, size_t S>
-    inline void num_array(T const(&array)[S]) {
+    inline void num_array(std::array<T, S> const& array) {
         static_assert (std::is_arithmetic_v<T> || std::is_enum_v<T>);
         static_assert (std::is_arithmetic_v<C> || std::is_enum_v<C>);
         if constexpr(std::is_same_v<C, std::remove_cvref_t<T>>) {
-            raw(array, sizeof(array));
+            raw(array.data(), sizeof(array));
         } else {
             for(auto const& value: array) {
                 num<C>(value);
@@ -145,12 +145,7 @@ struct Data_out {
 
     void pad(size_t S);
 
-    void zstr(std::string const& value) {
-        size_t const cur = buffer.size();
-        size_t const size = value.size() + 1;
-        buffer.resize(cur + size);
-        std::memcpy(buffer.data() + cur, value.data(), size);
-    }
+    void zstr(std::string const& value);
 
     void fstr(std::string const& value, size_t S);
 

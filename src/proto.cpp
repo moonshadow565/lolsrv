@@ -63,7 +63,7 @@
 #include "proto/proto_1.0.0.129.hpp"
 #include "proto/proto_1.0.0.130.hpp"
 #include "proto/proto_1.0.0.131.hpp"
-#include "proto/proto_base.hpp"
+
 
 Span<ProtoBase const*> proto_list() {
     static ProtoBase const* list[] = {

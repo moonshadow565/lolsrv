@@ -24,33 +24,33 @@ enum class EGP_ID : uint16_t {};
 
 struct DefaultPayload {};
 
-struct EGP_RequestJoinTeam : public DefaultPayload {
+struct EGP_RequestJoinTeam : DefaultPayload {
     int32_t Id_Player = {};
     uint32_t team = {};
 };
 
-struct EGP_RequestRename : public DefaultPayload {
+struct EGP_RequestRename : DefaultPayload {
     int64_t Id_Player = {};
     int32_t skinID = {};
     std::string buffer = {};
 };
 
-struct EGP_RequestReskin : public DefaultPayload {
+struct EGP_RequestReskin : DefaultPayload {
     int64_t Id_Player = {};
     int32_t skinID = {};
     std::string buffer = {};
 };
 
-struct EGP_TeamRosterUpdate : public DefaultPayload {
+struct EGP_TeamRosterUpdate : DefaultPayload {
     uint32_t teamsize_order = {};
     uint32_t teamsize_chaos = {};
-    int64_t orderMembers[24] = {};
-    int64_t chaosMembers[24] = {};
+    std::array<int64_t, 24> orderMembers = {};
+    std::array<int64_t, 24> chaosMembers = {};
     uint32_t current_teamsize_order = {};
     uint32_t current_teamsize_chaos = {};
 };
 
-struct EGP_Chat : public DefaultPayload {
+struct EGP_Chat : DefaultPayload {
     int32_t clientID = {};
     uint32_t chatType = {};
     std::string message = {};
@@ -79,7 +79,7 @@ struct PlayerLiteInfo {
     int64_t ID = {};
     uint16_t summonorLevel = {};
     uint32_t summonorSpell1 = {};
-    uint32_t summonorSpell2  = {};
+    uint32_t summonorSpell2 = {};
     bool isBot = {};
     uint32_t teamId = {};
     std::string botName = {};
@@ -97,6 +97,8 @@ struct ItemData {
 
 struct DefaultPacket {};
 
+struct WithSyncID {};
+
 struct PKT_Basic_Attack {
     uint32_t fromID = {};
     CommonBasicAttack data = {};
@@ -108,7 +110,7 @@ struct PKT_Basic_Attack_Pos {
     r3dPoint2D pos = {};
 };
 
-struct PKT_BuyItemAns : public DefaultPacket {
+struct PKT_BuyItemAns : DefaultPacket {
     uint32_t fromID = {};
     uint8_t slot = {};
     uint32_t itemID = {};
@@ -116,107 +118,107 @@ struct PKT_BuyItemAns : public DefaultPacket {
     bool useOnBought = {};
 };
 
-struct PKT_BuyItemReq : public DefaultPacket {
+struct PKT_BuyItemReq : DefaultPacket {
     uint32_t fromID = {};
     uint32_t itemID = {};
 };
 
-struct PKT_C2S_CharSelected : public DefaultPacket {
+struct PKT_C2S_CharSelected : DefaultPacket {
     uint32_t fromID = {};
 };
 
-struct PKT_C2S_ClientReady : public DefaultPacket {
+struct PKT_C2S_ClientReady : DefaultPacket {
     uint32_t fromID = {};
 };
 
-struct PKT_C2S_MapPing : public DefaultPacket {
+struct PKT_C2S_MapPing : DefaultPacket {
     uint32_t fromID = {};
     r3dPoint3D pos = {};
     uint32_t target = {};
     uint8_t pingCategory = {};
 };
 
-struct PKT_C2S_Ping_Load_Info : public DefaultPacket {
+struct PKT_C2S_Ping_Load_Info : DefaultPacket {
     uint32_t fromID = {};
     ConnectionInfo mConnectionInfo = {};
 };
 
-struct PKT_C2S_PlayEmote : public DefaultPacket {
+struct PKT_C2S_PlayEmote : DefaultPacket {
     uint32_t fromID = {};
     uint32_t mEmoteId = {};
 };
 
-struct PKT_C2S_QueryStatusReq : public DefaultPacket {
+struct PKT_C2S_QueryStatusReq : DefaultPacket {
     uint32_t fromID = {};
 };
 
-struct PKT_C2S_Reconnect : public DefaultPacket {
+struct PKT_C2S_Reconnect : DefaultPacket {
     uint32_t fromID = {};
     bool isFullReconnect = {};
 };
 
-struct PKT_NPC_Die : public DefaultPacket {
+struct PKT_NPC_Die : DefaultPacket {
     uint32_t fromID = {};
-    uint32_t killerNetID;
+    uint32_t killerNetID = {};
     uint8_t damageType = {};
     uint8_t mSpellSourceType = {};
     float DeathDuration = {};
     bool becomeZombie = {};
 };
 
-struct PKT_NPC_IssueOrderReq : public DefaultPacket {
+struct PKT_NPC_IssueOrderReq : DefaultPacket {
     uint32_t fromID = {};
     uint8_t order = {};
     r3dPoint3D pos = {};
     uint32_t targetNetID = {};
 };
 
-struct PKT_NPC_LevelUp : public DefaultPacket {
+struct PKT_NPC_LevelUp : DefaultPacket {
     uint32_t fromID = {};
     uint8_t mLevel = {};
     uint8_t mPoints = {};
 };
 
-struct PKT_NPC_UpgradeSpellAns : public DefaultPacket {
+struct PKT_NPC_UpgradeSpellAns : DefaultPacket {
     uint32_t fromID = {};
     uint8_t slot = {};
     uint8_t spellLevel = {};
     uint8_t spellTrainingPoints = {};
 };
 
-struct PKT_NPC_UpgradeSpellReq : public DefaultPacket {
+struct PKT_NPC_UpgradeSpellReq : DefaultPacket {
     uint32_t fromID = {};
     uint8_t slot = {};
 };
 
-struct PKT_OnEnterVisiblityClient : public DefaultPacket {
+struct PKT_OnEnterVisiblityClient : DefaultPacket, WithSyncID {
     uint32_t fromID = {};
     std::vector<ItemData> items = {};
     std::optional<r3dPoint3D> lookat = {};
     std::optional<r3dPoint2D> position = {};
-    uint32_t syncId = {};
+    uint32_t syncID = {};
 };
 
-struct PKT_RemoveItemAns : public DefaultPacket {
+struct PKT_RemoveItemAns : DefaultPacket {
     uint32_t fromID = {};
     uint8_t slot = {};
     uint8_t itemsInSlot = {};
 };
 
-struct PKT_RemoveItemReq : public DefaultPacket {
+struct PKT_RemoveItemReq : DefaultPacket {
     uint32_t fromID = {};
     uint8_t slot = {};
     uint8_t bSell = {};
 };
 
-struct PKT_S2C_ChangeCharacterData : public DefaultPacket {
+struct PKT_S2C_ChangeCharacterData : DefaultPacket {
     uint32_t fromID = {};
     uint32_t id = {};
-    bool useSpells = {};
+    bool useSpells = true;
     std::string skinName = {};
 };
 
-struct PKT_S2C_CreateHero : public DefaultPacket {
+struct PKT_S2C_CreateHero : DefaultPacket {
     uint32_t fromID = {};
     uint32_t netObjID = {};
     int32_t playerUID = {};
@@ -231,23 +233,23 @@ struct PKT_S2C_CreateHero : public DefaultPacket {
     std::string Skin = {};
 };
 
-struct PKT_S2C_CreateTurret : public DefaultPacket {
+struct PKT_S2C_CreateTurret : DefaultPacket {
     uint32_t fromID = {};
     uint32_t netObjID = {};
     uint8_t netNodeID = {};
     std::string Name = {};
 };
 
-struct PKT_S2C_FaceDirection : public DefaultPacket {
+struct PKT_S2C_FaceDirection : DefaultPacket {
     uint32_t fromID = {};
     r3dPoint3D direction = {};
 };
 
-struct PKT_S2C_EndSpawn : public DefaultPacket {
+struct PKT_S2C_EndSpawn : DefaultPacket {
     uint32_t fromID = {};
 };
 
-struct PKT_S2C_MapPing : public DefaultPacket {
+struct PKT_S2C_MapPing : DefaultPacket {
     uint32_t fromID = {};
     r3dPoint3D pos = {};
     uint32_t target = {};
@@ -258,89 +260,89 @@ struct PKT_S2C_MapPing : public DefaultPacket {
     bool bPingThrottled = {};
 };
 
-struct PKT_S2C_Ping_Load_Info : public DefaultPacket {
+struct PKT_S2C_Ping_Load_Info : DefaultPacket {
     uint32_t fromID = {};
     ConnectionInfo mConnectionInfo = {};
 };
 
-struct PKT_S2C_PlayAnimation : public DefaultPacket {
+struct PKT_S2C_PlayAnimation : DefaultPacket {
     uint32_t fromID = {};
     uint32_t flags = {};
     float scaleTime = {};
     std::string animationName = {};
 };
 
-struct PKT_S2C_PlayEmote : public DefaultPacket {
+struct PKT_S2C_PlayEmote : DefaultPacket {
     uint32_t fromID = {};
     uint32_t mEmoteId = {};
 };
 
-struct PKT_S2C_QueryStatusAns : public DefaultPacket {
+struct PKT_S2C_QueryStatusAns : DefaultPacket {
     uint32_t fromID = {};
     bool ok = {};
 };
 
-struct PKT_S2C_Reconnect : public DefaultPacket {
+struct PKT_S2C_Reconnect : DefaultPacket {
     uint32_t fromID = {};
     int32_t cid = {};
 };
 
-struct PKT_S2C_StartGame : public DefaultPacket {
+struct PKT_S2C_StartGame : DefaultPacket {
     uint32_t fromID = {};
     uint8_t tournamentEnabled = {};
 };
 
-struct PKT_S2C_StartSpawn : public DefaultPacket {
+struct PKT_S2C_StartSpawn : DefaultPacket {
     uint32_t fromID = {};
     uint8_t numBotsOrder = {};
     uint8_t numBotsChaos = {};
 };
 
-struct PKT_S2C_ToggleFoW : public DefaultPacket {
+struct PKT_S2C_ToggleFoW : DefaultPacket {
     uint32_t fromID = {};
 };
 
-struct PKT_SwapItemAns : public DefaultPacket {
-    uint32_t fromID = {};
-    uint8_t source = {};
-    uint8_t dest = {};
-};
-
-struct PKT_SwapItemReq : public DefaultPacket {
+struct PKT_SwapItemAns : DefaultPacket {
     uint32_t fromID = {};
     uint8_t source = {};
     uint8_t dest = {};
 };
 
-struct PKT_SynchVersionC2S : public DefaultPacket {
+struct PKT_SwapItemReq : DefaultPacket {
+    uint32_t fromID = {};
+    uint8_t source = {};
+    uint8_t dest = {};
+};
+
+struct PKT_SynchVersionC2S : DefaultPacket {
     uint32_t fromID = {};
     float mTime_LastClient = {};
     uint32_t mClientNetID = {};
     std::string mVersionString = {};
 };
 
-struct PKT_SynchVersionS2C : public DefaultPacket {
+struct PKT_SynchVersionS2C : DefaultPacket {
     uint32_t fromID = {};
     bool mIsVersionOk = {};
     int mMapToLoad = {};
-    PlayerLiteInfo playerInfo[12] = {};
+    std::array<PlayerLiteInfo, 12> playerInfo = {};
     std::string mVersionString = {};
     std::string mMapMode = {};
 };
 
-struct PKT_WaypointList : public DefaultPacket {
+struct PKT_WaypointList : DefaultPacket, WithSyncID {
     uint32_t fromID = {};
     uint32_t syncID = {};
     std::vector<r3dPoint2D> list = {};
 };
 
-struct PKT_World_LockCamera_Server : public DefaultPacket {
+struct PKT_World_LockCamera_Server : DefaultPacket {
     uint32_t fromID = {};
     bool lockCamera = {};
     int32_t clientID = {};
 };
 
-struct PKT_World_SendCamera_Server : public DefaultPacket {
+struct PKT_World_SendCamera_Server : DefaultPacket {
     uint32_t fromID = {};
     r3dPoint3D cameraPos = {};
     r3dPoint3D cameraDir = {};
@@ -348,7 +350,7 @@ struct PKT_World_SendCamera_Server : public DefaultPacket {
     int8_t syncID = {};
 };
 
-struct PKT_World_SendCamera_Server_Acknologment : public DefaultPacket {
+struct PKT_World_SendCamera_Server_Acknologment : DefaultPacket {
     uint32_t fromID = {};
     int8_t syncID = {};
 };
@@ -407,3 +409,27 @@ PKT_WaypointList,
 PKT_World_SendCamera_Server_Acknologment
 >;
 
+
+template <typename T>
+inline constexpr std::string_view type_name() {
+    std::string_view name, prefix, suffix;
+#ifdef __clang__
+    name = __PRETTY_FUNCTION__;
+    prefix = "std::string_view type_name() [T = ";
+    suffix = "]";
+#elif defined(__GNUC__)
+    name = __PRETTY_FUNCTION__;
+    prefix = "constexpr std::string_view type_name() [with T = ";
+    suffix = "; std::string_view = std::basic_string_view<char>]";
+#elif defined(_MSC_VER)
+    name = __FUNCSIG__;
+    prefix = "class std::basic_string_view<char,struct std::char_traits<char> > __cdecl type_name<struct ";
+    suffix = ">(void)";
+#endif
+    name.remove_prefix(prefix.size());
+    name.remove_suffix(suffix.size());
+    return name;
+}
+
+struct Json;
+extern std::vector<PKT_S2C> pkts_from_json(Json& json, Json const& repls);
