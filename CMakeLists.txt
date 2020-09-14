@@ -177,3 +177,5 @@ add_executable(lolsrv
     )
 target_link_libraries(lolsrv PRIVATE lolsrv_lib)
 target_include_directories(lolsrv PUBLIC src)
+
+file(COPY ./pkt/ DESTINATION ./pkt/)

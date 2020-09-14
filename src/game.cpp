@@ -16,6 +16,7 @@ Game::Game(const Options& aoptions)
             throw std::runtime_error("Invalid syntax: !open <path>");
         }
         send_file(cid, results[1], results[2]);
+        return "Ok!";
     });
     commands.insert_or_assign("!send", [this](auto cid, auto data) -> std::string {
         std::smatch results;
@@ -23,6 +24,7 @@ Game::Game(const Options& aoptions)
             throw std::runtime_error("Invalid syntax: !send <name> <data>");
         }
         send_data(cid, results[1], results[2]);
+        return "Ok!";
     });
     commands.insert_or_assign("!help", [](auto cid, auto data) -> std::string {
         (void)cid;
