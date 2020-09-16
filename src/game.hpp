@@ -1,9 +1,10 @@
 #pragma once
-#include "proto_pkt.hpp"
-#include "json.hpp"
 #include "options.hpp"
-#include <log.hpp>
+#include "proto_json.hpp"
+#include "proto_pkt.hpp"
+
 #include <functional>
+#include <log.hpp>
 #include <map>
 
 struct Game {
@@ -23,11 +24,9 @@ struct Game {
 
     void send_packet(int32_t cid, PKT_S2C pkt);
 
-    Json::Object build_replacements(int32_t cid, std::string_view repl_data);
+    void send_file(int32_t cid, std::string filename, IReplacer& replacer);
 
-    void send_data(int32_t cid, std::string name, std::string data);
-
-    bool send_file(int32_t cid, std::string filename, std::string repl_data = "");
+    void send_file(int32_t cid, std::string filename);
 
     void on_update();
 
@@ -69,4 +68,3 @@ struct Game {
 
     void on_packet(int32_t cid, PKT_World_SendCamera_Server const& pkt);
 };
-

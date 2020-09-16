@@ -2,7 +2,7 @@
 #include "proto_0.9.22.14.hpp"
 
 IMPL_PROTO_VER(PROTO_VER(0.9.22.16), PROTO_VER(0.9.22.14)) {
-    public:
+public:
     using ProtoBase::read;
     using ProtoBase::write;
 

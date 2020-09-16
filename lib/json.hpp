@@ -353,12 +353,8 @@ public: // Value access and manipulation
     }
 
 public: // Container operations
-    inline bool contains(String const& key) const noexcept {
-        return is<Object>() && ref<Object>().contains(key);
-    }
-    inline bool contains(size_t index) const noexcept {
-        return is<Array>() && ref<Array>().size() < index;
-    }
+    inline bool contains(String const& key) const noexcept { return is<Object>() && ref<Object>().contains(key); }
+    inline bool contains(size_t index) const noexcept { return is<Array>() && ref<Array>().size() < index; }
 
     inline Json& at(String const& key) { return get<Object>().at(key); }
     inline Json const& at(String const& key) const { return get<Object>().at(key); }
@@ -396,8 +392,8 @@ public: // Comparison
     inline bool operator==(Null) const noexcept { return is<Null>(); }
     inline bool operator==(Boolean other) const noexcept { return is<Boolean>() && ref<Boolean>() == other; }
     inline bool operator==(Number other) const noexcept { return is<Number>() && ref<Number>() == other; }
-    template<typename T>
-    inline bool operator==(T other) const noexcept requires (std::is_arithmetic_v<T>) {
+    template <typename T>
+    inline bool operator==(T other) const noexcept requires(std::is_arithmetic_v<T>) {
         return is<Number>() && ref<Number>() == (Number)other;
     }
     inline bool operator==(String const& other) const noexcept { return is<String>() && ref<String>() == other; }

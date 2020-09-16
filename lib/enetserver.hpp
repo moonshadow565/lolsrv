@@ -1,10 +1,10 @@
 #pragma once
+#include <blowfish.hpp>
+#include <enet/enet.h>
+#include <functional>
+#include <log.hpp>
 #include <map>
 #include <memory>
-#include <functional>
-#include <enet/enet.h>
-#include <log.hpp>
-#include <blowfish.hpp>
 
 struct ENetServer {
     std::function<void()> onNone;
@@ -14,10 +14,11 @@ struct ENetServer {
 
     ENetServer(ENetAddress const address, std::string_view const key) noexcept;
     void service(uint32_t timeout = 0) noexcept;
-    void send_raw(int32_t cid, void const *pkt, size_t size, uint8_t channel, uint32_t flags);
+    void send_raw(int32_t cid, void const* pkt, size_t size, uint8_t channel, uint32_t flags);
+
 private:
     BlowFish const blowfish;
-    std::unique_ptr<ENetHost, void(*)(ENetHost*)> const host;
+    std::unique_ptr<ENetHost, void (*)(ENetHost*)> const host;
     std::map<int32_t, ENetPeer*> peers = {};
 
     bool route_auth(ENetPeer* peer, ENetPacket const* packet);

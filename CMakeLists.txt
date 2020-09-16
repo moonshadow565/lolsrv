@@ -47,7 +47,8 @@ add_executable(lolsrv
     src/proto_base.cpp
     src/proto_base.hpp
     src/proto_pkt.hpp
-    src/proto_pkt.cpp
+    src/proto_json.hpp
+    src/proto_json.cpp
     src/proto/proto_0.8.13.26.cpp
     src/proto/proto_0.8.13.26.hpp
     src/proto/proto_0.9.22.14.cpp

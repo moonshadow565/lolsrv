@@ -12,13 +12,9 @@ void Data_in::raw(void* data, size_t size) {
     cur += size;
 }
 
-void Data_in::point2d(r3dPoint2D& value) {
-    raw(&value, sizeof(value));
-}
+void Data_in::point2d(r3dPoint2D& value) { raw(&value, sizeof(value)); }
 
-void Data_in::point3d(r3dPoint3D& value) {
-    raw(&value, sizeof(value));
-}
+void Data_in::point3d(r3dPoint3D& value) { raw(&value, sizeof(value)); }
 
 void Data_in::pad(size_t S) {
     check_space(S);
@@ -61,29 +57,19 @@ void Data_in::sstr(std::string& value) {
     }
 }
 
-void Data_in::szstr(std::string& value) {
-    sstr(value);
-}
+void Data_in::szstr(std::string& value) { sstr(value); }
 
 void Data_out::raw(void const* data, size_t size) {
     buffer.insert(buffer.end(), (char const*)data, (char const*)data + size);
 }
 
-void Data_out::pad(size_t size) {
-    buffer.insert(buffer.end(), size, '\0');
-}
+void Data_out::pad(size_t size) { buffer.insert(buffer.end(), size, '\0'); }
 
-void Data_out::zstr(std::string const& value) {
-    raw(value.data(), value.size() + 1);
-}
+void Data_out::zstr(std::string const& value) { raw(value.data(), value.size() + 1); }
 
-void Data_out::point2d(const r3dPoint2D& value) {
-    raw(&value, sizeof(value));
-}
+void Data_out::point2d(const r3dPoint2D& value) { raw(&value, sizeof(value)); }
 
-void Data_out::point3d(const r3dPoint3D& value) {
-    raw(&value, sizeof(value));
-}
+void Data_out::point3d(const r3dPoint3D& value) { raw(&value, sizeof(value)); }
 
 void Data_out::fstr(std::string const& value, size_t S) {
     size_t const cur = buffer.size();

@@ -1,11 +1,11 @@
 #pragma once
-#include <r3d.hpp>
-#include <io.hpp>
-#include <vector>
 #include <array>
-#include <string>
+#include <io.hpp>
 #include <optional>
+#include <r3d.hpp>
+#include <string>
 #include <variant>
+#include <vector>
 
 enum Channel : uint32_t {
     CHANNEL_DEFAULT = 0x0,
@@ -355,60 +355,54 @@ struct PKT_World_SendCamera_Server_Acknologment : DefaultPacket {
     int8_t syncID = {};
 };
 
+using PKT_C2S = std::variant<EGP_RequestJoinTeam,
+                             EGP_Chat,
+                             PKT_BuyItemReq,
+                             PKT_C2S_CharSelected,
+                             PKT_C2S_ClientReady,
+                             PKT_C2S_MapPing,
+                             PKT_C2S_Ping_Load_Info,
+                             PKT_C2S_PlayEmote,
+                             PKT_C2S_QueryStatusReq,
+                             PKT_C2S_Reconnect,
+                             PKT_NPC_IssueOrderReq,
+                             PKT_NPC_UpgradeSpellReq,
+                             PKT_RemoveItemReq,
+                             PKT_SwapItemReq,
+                             PKT_SynchVersionC2S,
+                             PKT_World_LockCamera_Server,
+                             PKT_World_SendCamera_Server>;
 
-using PKT_C2S = std::variant<
-EGP_RequestJoinTeam,
-EGP_Chat,
-PKT_BuyItemReq,
-PKT_C2S_CharSelected,
-PKT_C2S_ClientReady,
-PKT_C2S_MapPing,
-PKT_C2S_Ping_Load_Info,
-PKT_C2S_PlayEmote,
-PKT_C2S_QueryStatusReq,
-PKT_C2S_Reconnect,
-PKT_NPC_IssueOrderReq,
-PKT_NPC_UpgradeSpellReq,
-PKT_RemoveItemReq,
-PKT_SwapItemReq,
-PKT_SynchVersionC2S,
-PKT_World_LockCamera_Server,
-PKT_World_SendCamera_Server
->;
-
-using PKT_S2C = std::variant<
-EGP_RequestRename,
-EGP_RequestReskin,
-EGP_TeamRosterUpdate,
-EGP_Chat,
-PKT_Basic_Attack,
-PKT_Basic_Attack_Pos,
-PKT_BuyItemAns,
-PKT_NPC_Die,
-PKT_NPC_LevelUp,
-PKT_NPC_UpgradeSpellAns,
-PKT_OnEnterVisiblityClient,
-PKT_RemoveItemAns,
-PKT_S2C_ChangeCharacterData,
-PKT_S2C_CreateHero,
-PKT_S2C_CreateTurret,
-PKT_S2C_FaceDirection,
-PKT_S2C_EndSpawn,
-PKT_S2C_MapPing,
-PKT_S2C_Ping_Load_Info,
-PKT_S2C_PlayAnimation,
-PKT_S2C_PlayEmote,
-PKT_S2C_QueryStatusAns,
-PKT_S2C_Reconnect,
-PKT_S2C_StartGame,
-PKT_S2C_StartSpawn,
-PKT_S2C_ToggleFoW,
-PKT_SynchVersionS2C,
-PKT_SwapItemAns,
-PKT_WaypointList,
-PKT_World_SendCamera_Server_Acknologment
->;
-
+using PKT_S2C = std::variant<EGP_RequestRename,
+                             EGP_RequestReskin,
+                             EGP_TeamRosterUpdate,
+                             EGP_Chat,
+                             PKT_Basic_Attack,
+                             PKT_Basic_Attack_Pos,
+                             PKT_BuyItemAns,
+                             PKT_NPC_Die,
+                             PKT_NPC_LevelUp,
+                             PKT_NPC_UpgradeSpellAns,
+                             PKT_OnEnterVisiblityClient,
+                             PKT_RemoveItemAns,
+                             PKT_S2C_ChangeCharacterData,
+                             PKT_S2C_CreateHero,
+                             PKT_S2C_CreateTurret,
+                             PKT_S2C_FaceDirection,
+                             PKT_S2C_EndSpawn,
+                             PKT_S2C_MapPing,
+                             PKT_S2C_Ping_Load_Info,
+                             PKT_S2C_PlayAnimation,
+                             PKT_S2C_PlayEmote,
+                             PKT_S2C_QueryStatusAns,
+                             PKT_S2C_Reconnect,
+                             PKT_S2C_StartGame,
+                             PKT_S2C_StartSpawn,
+                             PKT_S2C_ToggleFoW,
+                             PKT_SynchVersionS2C,
+                             PKT_SwapItemAns,
+                             PKT_WaypointList,
+                             PKT_World_SendCamera_Server_Acknologment>;
 
 template <typename T>
 inline constexpr std::string_view type_name() {
@@ -430,6 +424,3 @@ inline constexpr std::string_view type_name() {
     name.remove_suffix(suffix.size());
     return name;
 }
-
-struct Json;
-extern std::vector<PKT_S2C> pkts_from_json(Json& json, Json const& repls);

@@ -1,6 +1,7 @@
 #pragma once
-#include <span.hpp>
 #include "proto_base.hpp"
+
+#include <span.hpp>
 
 extern Span<ProtoBase const*> proto_list();
 

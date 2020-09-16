@@ -1,11 +1,11 @@
 #pragma once
-#include <cinttypes>
 #include <array>
+#include <cinttypes>
 #include <string_view>
 
 struct BlowFish {
     struct State {
-        using PIKey  = std::array<uint32_t, 18>;
+        using PIKey = std::array<uint32_t, 18>;
         using SBoxes = std::array<std::array<uint32_t, 256>, 4>;
         PIKey pikey = {};
         SBoxes sboxes = {};

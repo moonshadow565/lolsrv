@@ -1,8 +1,9 @@
 #pragma once
-#include <stdexcept>
-#include <span.hpp>
-#include <log.hpp>
 #include "proto_pkt.hpp"
+
+#include <log.hpp>
+#include <span.hpp>
+#include <stdexcept>
 
 /// Errors
 
@@ -10,39 +11,33 @@ struct ProtoError : public std::exception {};
 
 struct ProtoErrorNoID : public ProtoError {
     std::string name;
-    inline ProtoErrorNoID(std::string_view aname) noexcept
-        : name(aname) {}
+    inline ProtoErrorNoID(std::string_view aname) noexcept : name(aname) {}
 };
 
 struct ProtoErrorUnknownID : public ProtoError {
     uint16_t id;
-    inline ProtoErrorUnknownID(uint16_t aid) noexcept
-        : id(aid) {}
+    inline ProtoErrorUnknownID(uint16_t aid) noexcept : id(aid) {}
 };
 
 struct ProtoErrorReadNotImpl : public ProtoError {
     std::string name;
-    inline ProtoErrorReadNotImpl(std::string_view aname) noexcept
-        : name(aname) {}
+    inline ProtoErrorReadNotImpl(std::string_view aname) noexcept : name(aname) {}
 };
 
 struct ProtoErrorWriteNotImpl : public ProtoError {
     std::string name;
-    inline ProtoErrorWriteNotImpl(std::string_view aname) noexcept
-        : name(aname) {}
+    inline ProtoErrorWriteNotImpl(std::string_view aname) noexcept : name(aname) {}
 };
 
 struct ProtoErrorIO : public ProtoError {
     std::string name;
     ptrdiff_t position;
-    inline ProtoErrorIO(std::string_view aname, ptrdiff_t aposition) noexcept
-        : name(aname), position(aposition) {}
+    inline ProtoErrorIO(std::string_view aname, ptrdiff_t aposition) noexcept : name(aname), position(aposition) {}
 };
 
 struct ProtoErrorBadChannel : public ProtoError {
     uint32_t channel;
-    inline ProtoErrorBadChannel(uint32_t achannel) noexcept
-        : channel(achannel) {}
+    inline ProtoErrorBadChannel(uint32_t achannel) noexcept : channel(achannel) {}
 };
 
 /// Utils
@@ -56,9 +51,19 @@ inline constexpr uint32_t ver(char const* str) noexcept {
 }
 
 #define PROTO_VER(v) ProtoVersion<ver(#v)>
-#define IMPL_PROTO_VER(v, from) template<> struct v : public from
-#define READ_NOT_IMPL { (void)io; throw ProtoErrorReadNotImpl(type_name<std::remove_cv_t<std::remove_reference_t<decltype(value)>>>()); }
-#define WRITE_NOT_IMPL { (void)io; throw ProtoErrorWriteNotImpl(type_name<std::remove_cv_t<std::remove_reference_t<decltype(value)>>>()); }
+#define IMPL_PROTO_VER(v, from) \
+    template <>                 \
+    struct v : public from
+#define READ_NOT_IMPL                                                                                         \
+    {                                                                                                         \
+        (void)io;                                                                                             \
+        throw ProtoErrorReadNotImpl(type_name<std::remove_cv_t<std::remove_reference_t<decltype(value)>>>()); \
+    }
+#define WRITE_NOT_IMPL                                                                                         \
+    {                                                                                                          \
+        (void)io;                                                                                              \
+        throw ProtoErrorWriteNotImpl(type_name<std::remove_cv_t<std::remove_reference_t<decltype(value)>>>()); \
+    }
 
 /// Protocol
 struct ProtoNameID {
@@ -66,10 +71,8 @@ struct ProtoNameID {
     uint16_t id = {};
 };
 
-
-template<uint32_t...>
+template <uint32_t...>
 struct ProtoVersion;
-
 
 struct ProtoBase {
 public:
@@ -238,4 +241,3 @@ public:
     PKT_C2S read_pkt(Data_in io, Channel channel) const;
     std::vector<char> write_pkt(PKT_S2C const& pkt) const;
 };
-

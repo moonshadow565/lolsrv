@@ -1,7 +1,7 @@
 #pragma once
 /// r3dPoint2D
 struct r3dPoint2D {
-    float x ={};
+    float x = {};
     float y = {};
 };
 

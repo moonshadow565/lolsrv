@@ -1,9 +1,10 @@
 #include "log.hpp"
+
+#include <charconv>
+#include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdarg>
 #include <string>
-#include <charconv>
 
 int Logger::currentLevel = LLOG_WARNING;
 
@@ -20,14 +21,12 @@ void Logger::Log(int const level, char const* const func, char const* const form
     fflush(stdout);
 }
 
-[[noreturn]] void Logger::panic_impl() noexcept {
-    exit(-1);
-}
+[[noreturn]] void Logger::panic_impl() noexcept { exit(-1); }
 
 std::string to_hex(Span<char const> data) noexcept {
     std::string result = {};
     result.reserve(data.size() * 4);
-    while(!data.empty()) {
+    while (!data.empty()) {
         auto line_size = std::min((size_t)data.size(), (size_t)16);
         for (auto byte : data.subspan(0, line_size)) {
             auto value = (uint8_t)byte;
