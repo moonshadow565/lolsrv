@@ -1,64 +1,13 @@
 #include "game.hpp"
 
+#include "game_replacer.hpp"
+
 #include <fstream>
 #include <json.hpp>
 #include <r3d_ops.hpp>
 #include <regex>
 
 static auto R_NAME_OPT = std::regex(R"(\s*([^\s]+)(.*))");
-
-struct GameReplacer : IReplacer {
-    Game* game;
-    int32_t cid;
-    GameReplacer(Game* agame, int32_t acid) : game(agame), cid(acid) {}
-
-protected:
-    virtual std::optional<Json> replace_impl(Json::StringView str) override {
-        if (str == u8"cid") {
-            return cid;
-        } else if (str == u8"heroNetID") {
-            return 0x40000001;
-        } else if (str == u8"lastPingX") {
-            return game->lastPingPos.x;
-        } else if (str == u8"lastPingY") {
-            return game->lastPingPos.y;
-        } else if (str == u8"lastPingZ") {
-            return game->lastPingPos.z;
-        } else if (str == u8"lastPingNetID") {
-            return game->lastPingNetID;
-        } else if (str == u8"lastSelectNetID") {
-            return game->lastSelectNetID;
-        } else {
-            return std::nullopt;
-        }
-    };
-};
-
-struct GameReplacerWithArgs : GameReplacer {
-    Json::Object lookup = {};
-    GameReplacerWithArgs(Game* agame, int32_t acid, std::string_view args) : GameReplacer(agame, acid) {
-        if (!args.empty()) {
-            try {
-                std::u8string buffer;
-                buffer.push_back(u8'{');
-                buffer.append(args.begin(), args.end());
-                buffer.push_back(u8'}');
-                auto json = Json::loads(buffer);
-                lookup = json.get<Json::Object>();
-            } catch (std::exception const& err) {
-                throw std::runtime_error(std::string("Bad args: ") + err.what());
-            }
-        }
-    }
-
-protected:
-    virtual std::optional<Json> replace_impl(Json::StringView str) override {
-        if (auto i = lookup.find(Json::String(str)); i != lookup.end()) {
-            return i->second;
-        }
-        return GameReplacer::replace_impl(str);
-    };
-};
 
 Game::Game(const Options& aoptions) : options(aoptions) {
     commands.insert_or_assign("!", [this](auto cid, auto data) -> std::string {
@@ -140,16 +89,14 @@ void Game::on_update() {}
 
 void Game::on_connected(int32_t cid) {
     (void)cid;
-    command_buffer[cid].clear();
+    clientData[cid].command_buffer.clear();
     syncId = 1;
-    lastPos = r3dPoint2D{26.0f, 280.0f};
-    lastPingPos = {};
-    lastPingNetID = {};
+    clientData[cid].lastPos = r3dPoint2D{26.0f, 280.0f};
 }
 
 void Game::on_disconnected(int32_t cid) {
     (void)cid;
-    command_buffer[cid].clear();
+    clientData[cid].command_buffer.clear();
 }
 
 void Game::on_packet(int32_t cid, EGP_RequestJoinTeam const& pkt) {
@@ -185,7 +132,7 @@ void Game::on_packet(int32_t cid, EGP_Chat const& pkt) {
     (void)pkt;
     LOG_DEBUG("from %d @ %u: `%s`\n", cid, pkt.chatType, pkt.message.c_str());
     if (pkt.message.ends_with("\\")) {
-        auto& buffer = command_buffer[cid];
+        auto& buffer = clientData[cid].command_buffer;
         buffer.append(pkt.message.substr(0, pkt.message.size() - 1));
         if (pkt.message.size() == 1) {
             parse_command(cid, buffer);
@@ -211,7 +158,7 @@ void Game::on_packet(int32_t cid, PKT_C2S_CharSelected const& pkt) {
                 });
     send_packet(cid,
                 PKT_S2C_CreateHero{
-                    .netObjID = 0x40000001,
+                    .netObjID = clientData[cid].heroNetID,
                     .playerUID = cid,
                     .netNodeID = 0x40,
                     .skillLevel = 1,
@@ -234,8 +181,8 @@ void Game::on_packet(int32_t cid, PKT_C2S_ClientReady const& pkt) {
     send_packet(cid, PKT_S2C_StartGame{});
     send_packet(cid,
                 PKT_OnEnterVisiblityClient{
-                    .fromID = 0x40000001,
-                    .position = lastPos,
+                    .fromID = clientData[cid].heroNetID,
+                    .position = clientData[cid].lastPos,
                 });
     send_file(cid, "pkt/on_start/all.js");
     send_file(cid, "pkt/on_start/" + options.protocol + ".js");
@@ -244,15 +191,15 @@ void Game::on_packet(int32_t cid, PKT_C2S_ClientReady const& pkt) {
 void Game::on_packet(int32_t cid, PKT_C2S_MapPing const& pkt) {
     (void)cid;
     (void)pkt;
-    lastPingPos = pkt.pos;
-    lastPingNetID = pkt.target;
+    clientData[cid].lastPingPos = {pkt.pos.x, pkt.pos.z};
+    clientData[cid].lastPingNetID = pkt.target;
     LOG_DEBUG("Ping 0x%08X @[%f, %f, %f]", pkt.pos.x, pkt.pos.y, pkt.pos.z, pkt.target);
     send_packet(cid,
                 PKT_S2C_MapPing{
-                    .fromID = 0x40000001,
+                    .fromID = clientData[cid].heroNetID,
                     .pos = pkt.pos,
                     .target = pkt.target,
-                    .src = 0x40000001,
+                    .src = clientData[cid].heroNetID,
                     .pingCategory = pkt.pingCategory,
                     .bPlayAudio = true,
                     .bShowChat = false,
@@ -277,7 +224,7 @@ void Game::on_packet(int32_t cid, PKT_C2S_PlayEmote const& pkt) {
     LOG_DEBUG("Playing emote: %u", pkt.mEmoteId);
     send_packet(cid,
                 PKT_S2C_PlayEmote{
-                    .fromID = 0x40000001,
+                    .fromID = clientData[cid].heroNetID,
                     .mEmoteId = pkt.mEmoteId,
                 });
 }
@@ -302,21 +249,22 @@ void Game::on_packet(int32_t cid, PKT_C2S_Reconnect const& pkt) {
 void Game::on_packet(int32_t cid, PKT_NPC_IssueOrderReq const& pkt) {
     (void)cid;
     (void)pkt;
+    clientData[cid].lastOrderPos = pkt.pos;
     if (pkt.order == 0x02) {
         r3dPoint2D end{pkt.pos.x, pkt.pos.z};
-        r3dPoint2D distance = end - lastPos;
+        r3dPoint2D distance = end - clientData[cid].lastPos;
         r3dPoint2D dir = distance / ::length(distance);
         send_packet(cid,
                     PKT_S2C_FaceDirection{
-                        .fromID = 0x40000001,
+                        .fromID = clientData[cid].heroNetID,
                         .direction = {dir.x, 0.0f, dir.y},
                     });
         send_packet(cid,
-                    PKT_WaypointList{.fromID = 0x40000001,
+                    PKT_WaypointList{.fromID = clientData[cid].heroNetID,
                                      .list = {
                                          end,
                                      }});
-        lastPos = end;
+        clientData[cid].lastPos = end;
     }
 }
 

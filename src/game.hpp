@@ -7,16 +7,29 @@
 #include <log.hpp>
 #include <map>
 
+struct ClientData {
+    std::string command_buffer = {};
+    // TODO:
+    //    uint32_t teamID = 100;
+    //    std::string playerName = "Test";
+    //    std::string championName = "Annie";
+    //    int32_t skinID = 0;
+    uint32_t heroNetID = 0x4000'0001;
+    r3dPoint2D lastPos = {};
+    r3dPoint2D lastPingPos = {};
+    r3dPoint3D lastOrderPos = {};
+    uint32_t lastPingNetID = {};
+    uint32_t lastSelectNetID = {};
+    uint32_t lastOrderNetID = {};
+};
+
 struct Game {
     Options const& options;
     std::function<void(int32_t cid, PKT_S2C const&)> send_packet_impl = {};
     std::map<std::string, std::function<std::string(int32_t cid, std::string data)>> commands = {};
-    std::map<int32_t, std::string> command_buffer = {};
+    std::map<int32_t, ClientData> clientData = {};
     uint32_t syncId = {};
-    r3dPoint2D lastPos = {};
-    r3dPoint3D lastPingPos = {};
-    uint32_t lastPingNetID = {};
-    uint32_t lastSelectNetID = {};
+    uint32_t nextNetID = 0x4000'0100u;
 
     Game(Options const& aoptions);
 

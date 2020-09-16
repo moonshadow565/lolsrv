@@ -1,7 +1,7 @@
 {
     pkt: "PKT_S2C_ChangeCharacterData",
     fromID: "${heroNetID}",
-    skinName: "${0}",
-    id: "${1}",
+    skinName: "${name}",
+    id: 0,
     useSpells: true,
 }

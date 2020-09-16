@@ -39,6 +39,8 @@ target_link_libraries(lolsrv_lib PUBLIC enet)
 add_executable(lolsrv
     src/game.hpp
     src/game.cpp
+    src/game_replacer.hpp
+    src/game_replacer.cpp
     src/main.cpp
     src/options.hpp
     src/options.cpp
