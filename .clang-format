@@ -1,0 +1,25 @@
+﻿---
+AccessModifierOffset: '-4'
+AlignEscapedNewlines: Left
+AllowAllConstructorInitializersOnNextLine: 'true'
+AlwaysBreakTemplateDeclarations: 'true'
+BinPackArguments: 'false'
+BinPackParameters: 'false'
+BreakConstructorInitializers: BeforeColon
+ColumnLimit: '120'
+ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
+DerivePointerAlignment: 'false'
+FixNamespaceComments: 'true'
+IncludeBlocks: Regroup
+IndentCaseLabels: 'false'
+IndentPPDirectives: None
+IndentWidth: '4'
+Language: Cpp
+NamespaceIndentation: All
+PointerAlignment: Left
+SpaceInEmptyParentheses: 'false'
+Standard: Cpp11
+TabWidth: '4'
+UseTab: Never
+
+...
