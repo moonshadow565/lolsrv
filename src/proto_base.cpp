@@ -128,6 +128,9 @@ void ProtoVer::read(Data_in& io, EGP_ID& value) const READ_NOT_IMPL
     void ProtoVer::read(Data_in& io, PKT_S2C_StartSpawn& value) const READ_NOT_IMPL
     void ProtoVer::write(Data_out& io, PKT_S2C_StartSpawn const& value) const WRITE_NOT_IMPL
 
+    void ProtoVer::read(Data_in& io, PKT_SpawnMinionS2C& value) const READ_NOT_IMPL
+    void ProtoVer::write(Data_out& io, PKT_SpawnMinionS2C const& value) const WRITE_NOT_IMPL
+
     void ProtoVer::read(Data_in& io, PKT_SynchVersionC2S& value) const READ_NOT_IMPL
     void ProtoVer::write(Data_out& io, PKT_SynchVersionC2S const& value) const WRITE_NOT_IMPL
 

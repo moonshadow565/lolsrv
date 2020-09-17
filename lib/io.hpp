@@ -89,8 +89,7 @@ struct Data_in {
         static_assert(sizeof(B) * 8 >= (S + ...));
         B buffer = {};
         num<B>(buffer);
-        auto one = [&buffer](auto field) mutable {
-            using F = decltype(field);
+        auto one = [&buffer]<typename F>(F field) mutable {
             auto result = static_cast<typename F::cast>(buffer & F::mask);
             if constexpr (std::is_signed_v<typename F::cast>) {
                 result <<= F::bits_left;

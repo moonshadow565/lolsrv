@@ -7,4 +7,7 @@ public:
     using ProtoBase::write;
 
     std::string_view name() const override;
+
+    void read(Data_in & io, PKT_SpawnMinionS2C & value) const override;
+    void write(Data_out & io, PKT_SpawnMinionS2C const& value) const override;
 };

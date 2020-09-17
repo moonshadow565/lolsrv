@@ -138,6 +138,9 @@ public:
     void read(Data_in & io, PKT_S2C_StartSpawn & value) const override;
     void write(Data_out & io, PKT_S2C_StartSpawn const& value) const override;
 
+    void read(Data_in & io, PKT_SpawnMinionS2C & value) const override;
+    void write(Data_out & io, PKT_SpawnMinionS2C const& value) const override;
+
     void read(Data_in & io, PKT_SwapItemAns & value) const override;
     void write(Data_out & io, PKT_SwapItemAns const& value) const override;
 

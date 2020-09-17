@@ -208,7 +208,7 @@ struct PKT_RemoveItemAns : DefaultPacket {
 struct PKT_RemoveItemReq : DefaultPacket {
     uint32_t fromID = {};
     uint8_t slot = {};
-    uint8_t bSell = {};
+    bool bSell = {};
 };
 
 struct PKT_S2C_ChangeCharacterData : DefaultPacket {
@@ -300,6 +300,22 @@ struct PKT_S2C_StartSpawn : DefaultPacket {
 
 struct PKT_S2C_ToggleFoW : DefaultPacket {
     uint32_t fromID = {};
+};
+
+struct PKT_SpawnMinionS2C : DefaultPacket {
+    uint32_t fromID = {};
+    uint32_t netObjID = {};
+    uint8_t netNodeID = {};
+    r3dPoint3D Pos = {};
+    int32_t skinID = {};
+    uint32_t CloneID = {};
+    uint32_t TeamID = {};
+    float visibilitySize = {};
+    bool IgnoreCollision = {};
+    bool IsWard = {};
+    bool useBehaviorTreeAI = {};
+    std::string Name = {};
+    std::string SkinName = {};
 };
 
 struct PKT_SwapItemAns : DefaultPacket {
@@ -399,6 +415,7 @@ using PKT_S2C = std::variant<EGP_RequestRename,
                              PKT_S2C_StartGame,
                              PKT_S2C_StartSpawn,
                              PKT_S2C_ToggleFoW,
+                             PKT_SpawnMinionS2C,
                              PKT_SynchVersionS2C,
                              PKT_SwapItemAns,
                              PKT_WaypointList,

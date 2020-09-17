@@ -273,6 +273,22 @@ inline void operator>>(Json const& json, PKT_S2C_StartSpawn& value) {
 
 inline void operator>>(Json const& json, PKT_S2C_ToggleFoW& value) { FIELD(fromID, uint32_t); }
 
+inline void operator>>(Json const& json, PKT_SpawnMinionS2C& value) {
+    FIELD(fromID, uint32_t);
+    FIELD(netObjID, uint32_t);
+    FIELD(netNodeID, uint8_t);
+    FIELD(Pos, r3dPoint3D);
+    FIELD(skinID, int32_t);
+    FIELD(CloneID, uint32_t);
+    FIELD(TeamID, uint32_t);
+    FIELD(visibilitySize, float);
+    FIELD(IgnoreCollision, bool);
+    FIELD(IsWard, bool);
+    FIELD(useBehaviorTreeAI, bool);
+    FIELD(Name, std::string);
+    FIELD(SkinName, std::string);
+}
+
 inline void operator>>(Json const& json, PKT_SynchVersionS2C& value) {
     FIELD(fromID, uint32_t);
     FIELD(mIsVersionOk, bool);

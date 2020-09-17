@@ -210,6 +210,9 @@ public:
     virtual void read(Data_in& io, PKT_S2C_ToggleFoW& value) const;
     virtual void write(Data_out& io, PKT_S2C_ToggleFoW const& value) const;
 
+    virtual void read(Data_in& io, PKT_SpawnMinionS2C& value) const;
+    virtual void write(Data_out& io, PKT_SpawnMinionS2C const& value) const;
+
     virtual void read(Data_in& io, PKT_SwapItemAns& value) const;
     virtual void write(Data_out& io, PKT_SwapItemAns const& value) const;
 
