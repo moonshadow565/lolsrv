@@ -11,6 +11,7 @@ struct Options {
     uint16_t port = 5119;
     std::string key = "GLzvuWtyCfHyGhF2";
     bool black_screen = false;
+    std::uint32_t ping = 0;
 
     Options(int argc, char** argv);
 };

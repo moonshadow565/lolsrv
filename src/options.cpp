@@ -25,6 +25,9 @@ Options::Options(int argc, char** argv) {
         .help("Black loading screen")
         .implicit_value((bool)true)
         .default_value((bool)black_screen);
+    program.add_argument("--ping")
+        .action([](std::string const& v) { return (uint32_t)std::stoul(v); })
+        .default_value((uint32_t)ping);
     program.add_argument("-l", "--log")
         .help("Log level")
         .action([](std::string const& v) {
@@ -47,6 +50,7 @@ Options::Options(int argc, char** argv) {
         port = program.get<uint16_t>("--port");
         key = program.get<std::string>("--key");
         black_screen = program.get<bool>("-b");
+        ping = program.get<uint32_t>("--ping");
         Logger::currentLevel = program.get<int>("-l");
     } catch (std::exception const& error) {
         panic(error.what());

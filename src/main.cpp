@@ -127,7 +127,7 @@ public:
         server.onConnected = std::bind_front(&App::on_connected, this);
         server.onDisconnected = std::bind_front(&App::on_disconnected, this);
         server.onPacket = std::bind_front(&App::on_packet, this);
-        server.service();
+        server.service(options.ping);
     }
 };
 
