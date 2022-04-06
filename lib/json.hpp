@@ -69,7 +69,7 @@ private: // Discriminated union
         String* string;
         Array* array;
         Object* object;
-    } value = {.null = {}};
+    } value = {.null = nullptr};
 
 public: // Value semantics with deep copy
     constexpr inline Json() noexcept = default;
@@ -131,7 +131,7 @@ public: // Value semantics with deep copy
 public: // Basic value conversion and assignment
     template <typename T>
     Json(T const*) = delete;
-    inline Json(Null) noexcept : tag{Tag::Null}, value{.null = {}} {}
+    inline Json(Null) noexcept : tag{Tag::Null}, value{.null = nullptr} {}
     inline Json(bool other) noexcept : tag{Tag::Boolean}, value{.boolean = other} {}
     inline Json(Number other) noexcept : tag{Tag::Number}, value{.number = other} {}
     template <typename T>
